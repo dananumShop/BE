@@ -1,0 +1,3 @@
+[submodule "yml_importer"]
+	path = yml_importer
+	url = https://github.com/dananumShop/yml_importer
