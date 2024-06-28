@@ -31,6 +31,7 @@ dependencies {
 
     // DB
     runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
