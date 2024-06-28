@@ -1,4 +1,4 @@
-package org.dananum.dananum_shop.web.entity;
+package org.dananum.dananum_shop.global.web.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
