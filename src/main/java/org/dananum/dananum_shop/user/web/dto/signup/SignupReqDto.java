@@ -1,4 +1,4 @@
-package org.dananum.dananum_shop.user.web.dto;
+package org.dananum.dananum_shop.user.web.dto.signup;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;

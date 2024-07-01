@@ -7,7 +7,7 @@ import lombok.*;
 import org.dananum.dananum_shop.global.web.entity.TimeEntity;
 import org.dananum.dananum_shop.global.web.enums.AccountStatus;
 import org.dananum.dananum_shop.global.web.enums.Roles;
-import org.dananum.dananum_shop.user.web.dto.SignupReqDto;
+import org.dananum.dananum_shop.user.web.dto.signup.SignupReqDto;
 
 @Entity
 @Getter
