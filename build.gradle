@@ -55,6 +55,13 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // email 인증
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
+    implementation 'javax.mail:mail:1.4.7'
+
+    // Spring Context Support
+    implementation 'org.springframework:spring-context-support:5.3.9'
+
 }
 
 tasks.named('test') {
