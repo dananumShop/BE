@@ -12,5 +12,12 @@ public class TokenDto {
     private String tokenType;
     private String accessToken;
     private String refreshToken;
-    private Long duration;
+
+    public static TokenDto from(String accessToken, String refreshToken) {
+        return TokenDto.builder()
+                .tokenType("Bearer ")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 }

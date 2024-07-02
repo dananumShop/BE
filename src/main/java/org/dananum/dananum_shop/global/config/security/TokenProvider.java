@@ -3,8 +3,16 @@ package org.dananum.dananum_shop.global.config.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.dananum.dananum_shop.global.web.dto.TokenDto;
+import org.dananum.dananum_shop.global.config.redis.entity.RefreshToken;
+import org.dananum.dananum_shop.global.config.redis.repository.RefreshTokenRepository;
+import org.dananum.dananum_shop.global.config.redis.service.TokenService;
+import org.dananum.dananum_shop.global.util.JwtTokenUtil;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
+import org.dananum.dananum_shop.user.repository.UserRepository;
+import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,25 +31,27 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class TokenProvider {
-    /*
-     * 유저정보로 JWT토큰 생성 & 생성된 토큰을 바탕으로 유저 정보를 가져옴
-     * 암호화 / 복호화 / 검증 다 여기서
-     * */
+
     private static final String AUTHORITIES_KEY = "Authorization";
-    private static final String BEARER_TYPE = "Bearer ";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
+    private static final int ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;
 
     private final Key key;
 
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
+    private final TokenService tokenService;
+
     //암호화 키값 생성
-    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
+    public TokenProvider(@Value("${jwt.secret}") String secretKey, RefreshTokenRepository refreshTokenRepository, UserRepository userRepository, TokenService tokenService) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userRepository = userRepository;
+        this.tokenService = tokenService;
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     //토큰 생성
-    public TokenDto generateTokenDto(Authentication authentication) {
+    public void generateTokenDto(Authentication authentication, HttpServletResponse httpServletResponse) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -49,33 +59,25 @@ public class TokenProvider {
 
         long now = (new Date()).getTime();
 
-        // Access Token 생성
+        // Access RefreshToken 생성
         // Access Token에만 유저정보 담음
-        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        String accessToken = JwtTokenUtil.createAccessToken(authorities, authentication.getName(), key);
 
-        String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())       // payload "sub": "name"
-                .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
-                .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
-                .signWith(key, SignatureAlgorithm.HS512)    // header "alg": "HS512"
-                .compact();
-
-        // Refresh Token 생성
+        // Refresh RefreshToken 생성
         // 만료일자 외 다른 정보 필요없음
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
+        String refreshToken = JwtTokenUtil.createRefreshToken(key);
 
-        log.info("accessToken : "+accessToken);
-        log.info("refreshToken : "+refreshToken);
+        log.debug("accessToken : "+accessToken);
+        log.debug("refreshToken : "+refreshToken);
 
-        return TokenDto.builder()
-                .tokenType(BEARER_TYPE)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .duration(REFRESH_TOKEN_EXPIRE_TIME)
-                .build();
+        tokenService.saveTokenInfo(authentication.getName(), accessToken, refreshToken);
+
+        Cookie accessTokenCookie = new Cookie("ACCESS_TOKEN", accessToken);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(ACCESS_TOKEN_EXPIRE_TIME);
+
+        httpServletResponse.addCookie(accessTokenCookie);
+
     }
 
     public Authentication getAuthentication(String accessToken) {
@@ -98,26 +100,45 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String accessToken, HttpServletResponse httpServletResponse) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
+
+            JwtTokenUtil.isExpired(accessToken, key);
+
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
+            log.error("AccessToken 이 만료되었습니다.");
+            getNetAccessToken(accessToken, getAuthentication(accessToken), httpServletResponse);
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
-        }
+    }
         return false;
+    }
+
+    private void getNetAccessToken(String accessToken, Authentication authentication, HttpServletResponse httpServletResponse) {
+        RefreshToken tokenInfo = refreshTokenRepository.findByAccessToken(accessToken)
+                .orElseThrow(() -> new CustomNotFoundException("일치하는 토큰을 찾을 수 없습니다."));
+
+        String refreshToken = tokenInfo.getRefreshToken();
+
+        JwtTokenUtil.isExpired(refreshToken, key);
+
+        Long userCid = Long.valueOf(tokenInfo.getId());
+        UserEntity loggedInUser = userRepository.findById(userCid)
+                .orElseThrow(() -> new CustomNotFoundException("일치하는 유저가 없습니다"));
+
+        generateTokenDto(authentication, httpServletResponse);
     }
 
     // 만료된 토큰이여도 정보를 꺼내기 위해 분리
     private Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            return JwtTokenUtil.getClaims(accessToken, key);
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }

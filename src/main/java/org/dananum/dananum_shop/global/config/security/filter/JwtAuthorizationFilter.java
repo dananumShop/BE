@@ -29,22 +29,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     // 실제 필터링 로직은 doFilterInternal 에 들어감
     // JWT 토큰의 인증 정보를 현재 쓰레드의 SecurityContext 에 저장하는 역할 수행
     // 가입 / 로그인 / 재발급을 제외한 모든 Request 요청은 이 필터를 거치기때문에 토큰 정보가 없거나 유효하지 않다면 정상수행 불가능
-    // DB 조회가 아니라 Access Token 에 있는 MemberID 를 꺼낸것이기 때문에 탈퇴로 인한 예외상황 Service단에서 고려
+    // DB 조회가 아니라 Access RefreshToken 에 있는 MemberID 를 꺼낸것이기 때문에 탈퇴로 인한 예외상황 Service단에서 고려
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse httpServletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         // 1. Request Header 에서 토큰을 꺼냄
-        String jwt = resolveToken(request);
+        String accessToken = resolveToken(request);
 
         // 2. validateToken 으로 토큰 유효성 검사
         // 정상 토큰이면 해당 토큰으로 Authentication 을 가져와서 SecurityContext 에 저장
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            Authentication authentication = tokenProvider.getAuthentication(jwt);
+        if (StringUtils.hasText(accessToken) && tokenProvider.validateToken(accessToken, httpServletResponse)) {
+            Authentication authentication = tokenProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            log.info("[filter] 토큰 유효성 검사 통과 Authentication생성 완료 = " + authentication);
+            log.debug("[filter] 토큰 유효성 검사 통과 Authentication생성 완료 = " + authentication);
         }
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, httpServletResponse);
     }
 
     // Request Header 에서 토큰 정보를 꺼내오기
