@@ -43,12 +43,4 @@ public class AuthController {
 
         return ResponseEntity.ok(CommonResponseDto.successResponse("로그인 성공"));
     }
-
-    @PostMapping("/test")
-    public void test(@RequestBody LoginReqDto loginInfo) {
-        log.debug("테스트 시작 \n{}", loginInfo);
-        authService.test(loginInfo);
-        log.debug("테스트 성공");
-
-    }
 }
