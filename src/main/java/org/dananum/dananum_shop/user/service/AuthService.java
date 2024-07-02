@@ -74,14 +74,4 @@ public class AuthService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         tokenProvider.generateTokenDto(authentication, httpServletResponse);
     }
-
-
-    public void test(LoginReqDto loginInfo) {
-        UserEntity user = userRepository.findByUserEmail(loginInfo.getUserEmail())
-                .orElseThrow(()->new CustomNotFoundException("테스트 로그인에 실패했습니다."));
-
-        log.info(user.getUserEmail());
-        log.info(user.getUserPassword());
-        log.info(String.valueOf(user.getUserCid()));
-    }
 }
