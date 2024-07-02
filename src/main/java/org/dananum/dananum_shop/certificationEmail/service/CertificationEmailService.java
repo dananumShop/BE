@@ -1,4 +1,4 @@
-package org.dananum.dananum_shop.certificationEmail.web.service;
+package org.dananum.dananum_shop.certificationEmail.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
