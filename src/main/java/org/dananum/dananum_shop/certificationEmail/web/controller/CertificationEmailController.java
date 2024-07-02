@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.certificationEmail.web.dto.EmailCheckReqDto;
 import org.dananum.dananum_shop.certificationEmail.web.dto.EmailReqDto;
-import org.dananum.dananum_shop.certificationEmail.web.service.CertificationEmailService;
+import org.dananum.dananum_shop.certificationEmail.service.CertificationEmailService;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegerityCiolationException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
