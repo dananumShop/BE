@@ -2,7 +2,9 @@ package org.dananum.dananum_shop.user.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.config.security.TokenProvider;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.dananum.dananum_shop.global.web.dto.TokenDto;
 import org.dananum.dananum_shop.user.repository.UserRepository;
 import org.dananum.dananum_shop.user.util.UserValidation;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -58,23 +61,27 @@ public class AuthService {
      *
      * @return accessToken
      */
-//    @Transactional
-//    public String login(LoginReqDto loginInfo, HttpServletResponse httpServletResponse) {
-//        userValidation.validateLogin(loginInfo);
-////
-////        TokenDto token = create
-//
-//    }
+    @Transactional
+    public void login(LoginReqDto loginInfo, HttpServletResponse httpServletResponse) {
+        userValidation.validateLogin(loginInfo);
+
+        createToken(loginInfo, httpServletResponse);
+    }
 
     // 토큰 생성
-//    private TokenDto createToken(LoginReqDto loginInfo) {
-//        UsernamePasswordAuthenticationToken authenticationToken = loginInfo.toAuthentication();
-//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-//        TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-//        refreshTokenRepository.save(RefreshToken.from(authentication.getName(), tokenDto.getRefreshToken()));
-//
-//        return tokenDto;
-//    }
+    private void createToken(LoginReqDto loginInfo, HttpServletResponse httpServletResponse) {
+        UsernamePasswordAuthenticationToken authenticationToken = loginInfo.toAuthentication();
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        tokenProvider.generateTokenDto(authentication, httpServletResponse);
+    }
 
 
+    public void test(LoginReqDto loginInfo) {
+        UserEntity user = userRepository.findByUserEmail(loginInfo.getUserEmail())
+                .orElseThrow(()->new CustomNotFoundException("테스트 로그인에 실패했습니다."));
+
+        log.info(user.getUserEmail());
+        log.info(user.getUserPassword());
+        log.info(String.valueOf(user.getUserCid()));
+    }
 }

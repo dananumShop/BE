@@ -44,12 +44,12 @@ public class UserEntity extends TimeEntity {
 
     @NotNull
     @Schema(description = "계정 삭제 유무", example = "ACTIVE")
-    @Column(name = "account_status")
+    @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
 
     @NotNull
     @Schema(description = "유저 권한", example = "ROLE_USER")
-    @Column(name = "user_role")
+    @Enumerated(EnumType.STRING)
     private Roles userRole;
 
     public static UserEntity from(final SignupReqDto signupInfo, final String password) {

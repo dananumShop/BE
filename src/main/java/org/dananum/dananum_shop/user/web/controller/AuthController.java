@@ -34,13 +34,21 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponseDto.createSuccessResponse("회원가입 성공"));
     }
 
-//    @Operation(summary = "로그인", description = "로그인을 다루는 api입니다.")
-//    @PostMapping("/login")
-//    public ResponseEntity<CommonResponseDto> login(@RequestBody LoginReqDto loginInfo, HttpServletResponse httpServletResponse) {
-//        log.debug("[AUTH] 로그인 요청이 들어왔습니다. \n{}", loginInfo);
-//        authService.login(loginInfo, httpServletResponse);
-//        log.debug("[AUTH] 로그인이 성공적으로 이루어 졌습니다.");
-//
-//        return ResponseEntity.ok(CommonResponseDto.successResponse("로그인 성공"))
-//    }
+    @Operation(summary = "로그인", description = "로그인을 다루는 api입니다.")
+    @PostMapping("/login")
+    public ResponseEntity<CommonResponseDto> login(@RequestBody LoginReqDto loginInfo, HttpServletResponse httpServletResponse) {
+        log.debug("[AUTH] 로그인 요청이 들어왔습니다. \n{}", loginInfo);
+        authService.login(loginInfo, httpServletResponse);
+        log.debug("[AUTH] 로그인이 성공적으로 이루어 졌습니다.");
+
+        return ResponseEntity.ok(CommonResponseDto.successResponse("로그인 성공"));
+    }
+
+    @PostMapping("/test")
+    public void test(@RequestBody LoginReqDto loginInfo) {
+        log.debug("테스트 시작 \n{}", loginInfo);
+        authService.test(loginInfo);
+        log.debug("테스트 성공");
+
+    }
 }
