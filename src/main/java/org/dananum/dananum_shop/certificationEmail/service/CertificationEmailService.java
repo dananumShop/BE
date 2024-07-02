@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.certificationEmail.web.dto.EmailReqDto;
 import org.dananum.dananum_shop.global.config.redis.service.EmailService;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegerityCiolationException;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -66,8 +68,13 @@ public class CertificationEmailService {
         return random.nextInt(max - min + 1) + min;
     }
 
-    public Boolean checkAuthNum(String email, String authNum) {
-        if (emailService.getData(authNum) == null) return false;
-        else return emailService.getData(authNum).equals(email);
+    public void checkAuthNum(String email, String authNum) {
+        if(emailService.getData(authNum) == null) {
+            throw new CustomDataIntegerityCiolationException("인증번호가 잘못되었습니다.");
+        }
+
+        if(emailService.getData(authNum).equals(email)) {
+            throw new CustomNotFoundException("일치하는 이메일이 없습니다.");
+        }
     }
 }
