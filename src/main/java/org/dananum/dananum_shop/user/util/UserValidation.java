@@ -3,6 +3,7 @@ package org.dananum.dananum_shop.user.util;
 import lombok.RequiredArgsConstructor;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomAccessDeniedException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegerityCiolationException;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomMissingFileException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.dananum.dananum_shop.global.web.enums.AccountStatus;
 import org.dananum.dananum_shop.user.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @RequiredArgsConstructor
@@ -39,4 +41,11 @@ public class UserValidation {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
     }
+
+    // 이메일 유저 검색
+    public UserEntity findUserByUserEmail(String userEmail) {
+        return userRepository.findByUserEmail(userEmail)
+                .orElseThrow(()->new CustomNotFoundException("일치하는 이메일이 존재하지 않습니다."));
+    }
+
 }
