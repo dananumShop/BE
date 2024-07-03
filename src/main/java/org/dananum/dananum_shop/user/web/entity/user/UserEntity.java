@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.dananum.dananum_shop.global.web.entity.TimeEntity;
 import org.dananum.dananum_shop.global.web.enums.AccountStatus;
+import org.dananum.dananum_shop.global.web.enums.EmailCertificationState;
 import org.dananum.dananum_shop.global.web.enums.Roles;
 import org.dananum.dananum_shop.user.web.dto.signup.SignupReqDto;
 
@@ -52,6 +53,11 @@ public class UserEntity extends TimeEntity {
     @Enumerated(EnumType.STRING)
     private Roles userRole;
 
+    @NotNull
+    @Schema(description = "유저 인증상태", example = "NEEDED")
+    @Enumerated(EnumType.STRING)
+    private EmailCertificationState emailCertificationState;
+
     public static UserEntity from(final SignupReqDto signupInfo, final String password) {
         return UserEntity.builder()
                 .userEmail(signupInfo.getUserEmail())
@@ -59,6 +65,7 @@ public class UserEntity extends TimeEntity {
                 .userPassword(password)
                 .accountStatus(AccountStatus.ACTIVE)
                 .userRole(Roles.ROLE_USER)
+                .emailCertificationState(EmailCertificationState.NEEDED)
                 .build();
     }
 
