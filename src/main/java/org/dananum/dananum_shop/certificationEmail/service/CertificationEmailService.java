@@ -8,6 +8,8 @@ import org.dananum.dananum_shop.certificationEmail.web.entity.EmailEntity;
 import org.dananum.dananum_shop.global.config.redis.service.EmailService;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegerityCiolationException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
+import org.dananum.dananum_shop.global.web.enums.EmailCertificationState;
+import org.dananum.dananum_shop.user.repository.UserRepository;
 import org.dananum.dananum_shop.user.util.UserValidation;
 import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,7 @@ public class CertificationEmailService {
     private final JavaMailSender mailSender;
     private final EmailService emailService;
     private final EmailRepository emailRepository;
+    private final UserRepository userRepository;
 
     private final UserValidation userValidation;
 
@@ -93,5 +96,16 @@ public class CertificationEmailService {
         if(!storedVerificationCode.equals(verificationCode)) {
             throw new CustomDataIntegerityCiolationException("인증번호가 일치하지 않습니다.");
         }
+
+        updateUserEmailCertificationState(email);
+    }
+
+    private void updateUserEmailCertificationState(String email) {
+
+        UserEntity user = userRepository.findByUserEmail(email)
+                .orElseThrow(() -> new CustomNotFoundException("일치하는 유저가 없습니다."));
+
+        user.updateEmailCertificationState(EmailCertificationState.COMPLETED);
+        userRepository.save(user);
     }
 }

@@ -69,4 +69,9 @@ public class UserEntity extends TimeEntity {
                 .build();
     }
 
+    public UserEntity updateEmailCertificationState(EmailCertificationState newState) {
+        this.emailCertificationState = newState;
+        return this;
+    }
+
 }
