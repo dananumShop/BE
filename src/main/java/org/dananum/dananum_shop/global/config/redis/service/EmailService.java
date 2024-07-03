@@ -1,31 +1,20 @@
 package org.dananum.dananum_shop.global.config.redis.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.dananum.dananum_shop.certificationEmail.repository.EmailRepository;
+import org.dananum.dananum_shop.certificationEmail.web.entity.EmailEntity;
+import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
 public class EmailService {
 
-    private final StringRedisTemplate redisTemplate;
+    private final EmailRepository emailRepository;
 
-    public String getData(String key) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        return valueOperations.get(key);
-    }
-
-    public void setDataExpire(String key, String value, long duration) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        Duration expireDuration = Duration.ofSeconds(duration);
-        valueOperations.set(key, value, expireDuration);
-    }
-
-    public void deleteData(String key) {
-        redisTemplate.delete(key);
+    public void setEmailInfo(UserEntity user, String verificationCode) {
+        emailRepository.save(EmailEntity.from(user, verificationCode));
     }
 
 }
