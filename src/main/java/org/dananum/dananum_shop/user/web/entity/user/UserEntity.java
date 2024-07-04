@@ -10,6 +10,8 @@ import org.dananum.dananum_shop.global.web.enums.EmailCertificationState;
 import org.dananum.dananum_shop.global.web.enums.Roles;
 import org.dananum.dananum_shop.user.web.dto.signup.SignupReqDto;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -47,6 +49,10 @@ public class UserEntity extends TimeEntity {
     @Schema(description = "계정 삭제 유무", example = "ACTIVE")
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
+
+    @Schema(description = "계정 탈퇴 날짜", example = "240101")
+    @Column(name = "deleted_time")
+    private LocalDateTime deletedTime;
 
     @NotNull
     @Schema(description = "유저 권한", example = "ROLE_USER")
