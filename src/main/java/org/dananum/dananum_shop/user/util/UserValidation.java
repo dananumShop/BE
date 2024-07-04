@@ -48,4 +48,10 @@ public class UserValidation {
                 .orElseThrow(()->new CustomNotFoundException("일치하는 이메일이 존재하지 않습니다."));
     }
 
+    // 유저 유무 확인
+    public UserEntity validateExistUser(String userEmail) {
+        return userRepository.findByUserEmail(userEmail)
+                .orElseThrow(()-> new CustomNotFoundException("로그인된 유저가 존재하지 않습니다."));
+    }
+
 }
