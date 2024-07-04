@@ -74,4 +74,16 @@ public class UserEntity extends TimeEntity {
         return this;
     }
 
+    public UserEntity updateAccountStatus(AccountStatus accountStatus) {
+        if(accountStatus == AccountStatus.ACTIVE) {
+            this.accountStatus = AccountStatus.DELETED;
+        }
+
+        if(accountStatus == AccountStatus.DELETED) {
+            this.accountStatus = AccountStatus.ACTIVE;
+        }
+
+        return this;
+    }
+
 }
