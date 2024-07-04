@@ -43,7 +43,7 @@ public class AuthController {
 
     @Operation(summary = "이메일 중복 테스트", description = "이메일이 중복되었는지 확인하는 api입니다.")
     @GetMapping("/duplicate-test/email")
-    public  ResponseEntity<CommonResponseDto> emailDuplicateTest(@RequestParam String userEmail) {
+    public ResponseEntity<CommonResponseDto> emailDuplicateTest(@RequestParam String userEmail) {
         log.debug("[DUPLICATE] 이메일 중복확인 요청이 들어왔습니다.");
         authService.emailDuplicateTest(userEmail);
         log.debug("[DUPLICATE] 이메일 중복검사가 정상적으로 이루어 졌습니다.");

@@ -2,8 +2,7 @@ package org.dananum.dananum_shop.user.util;
 
 import lombok.RequiredArgsConstructor;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomAccessDeniedException;
-import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegerityCiolationException;
-import org.dananum.dananum_shop.global.web.advice.exception.CustomMissingFileException;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegrityViolationException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.dananum.dananum_shop.global.web.enums.AccountStatus;
 import org.dananum.dananum_shop.user.repository.UserRepository;
@@ -12,7 +11,6 @@ import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +22,7 @@ public class UserValidation {
     // 이메일 중복 확인
     public void validateDuplicateEmail(String email) {
         if (userRepository.existsByUserEmail(email)) {
-            throw new CustomDataIntegerityCiolationException("이미 사용중인 이메일입니다.");
+            throw new CustomDataIntegrityViolationException("이미 사용중인 이메일입니다.");
         }
     }
 
@@ -46,6 +44,29 @@ public class UserValidation {
     public UserEntity findUserByUserEmail(String userEmail) {
         return userRepository.findByUserEmail(userEmail)
                 .orElseThrow(()->new CustomNotFoundException("일치하는 이메일이 존재하지 않습니다."));
+    }
+
+    // 유저 유무 확인
+    public UserEntity validateExistUser(String userEmail) {
+        return userRepository.findByUserEmail(userEmail)
+                .orElseThrow(()-> new CustomNotFoundException("로그인된 유저가 존재하지 않습니다."));
+    }
+
+    // 계정 탈퇴 상태 조회
+    public void validateAccountReqStatus(UserEntity user, AccountStatus reqStatus) {
+        if(user.getAccountStatus() == reqStatus) {
+            throwAccountReqError(reqStatus);
+        }
+    }
+
+    private void throwAccountReqError(AccountStatus accountStatus) {
+        if(accountStatus == AccountStatus.ACTIVE) {
+            throw new CustomDataIntegrityViolationException("계정이 탈퇴 상태가 이닙니다");
+        }
+
+        if(accountStatus == AccountStatus.DELETED) {
+            throw new CustomDataIntegrityViolationException("이미 탈퇴된 계정입니다.");
+        }
     }
 
 }

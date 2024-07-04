@@ -27,8 +27,8 @@ public class ExceptionControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(CustomDataIntegerityCiolationException.class)
-    public ResponseEntity<CommonResponseDto> handleDataIntegrityViolationException(CustomDataIntegerityCiolationException e) {
+    @ExceptionHandler(CustomDataIntegrityViolationException.class)
+    public ResponseEntity<CommonResponseDto> handleDataIntegrityViolationException(CustomDataIntegrityViolationException e) {
         log.error("[CONFLICT] 데이터 무결성 에러로 다음의 에러메시지를 출력합니다." + e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 CommonResponseDto.builder()

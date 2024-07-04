@@ -6,7 +6,7 @@ import org.dananum.dananum_shop.certificationEmail.repository.EmailRepository;
 import org.dananum.dananum_shop.certificationEmail.web.dto.EmailReqDto;
 import org.dananum.dananum_shop.certificationEmail.web.entity.EmailEntity;
 import org.dananum.dananum_shop.global.config.redis.service.EmailService;
-import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegerityCiolationException;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegrityViolationException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.dananum.dananum_shop.global.web.enums.EmailCertificationState;
 import org.dananum.dananum_shop.user.repository.UserRepository;
@@ -94,7 +94,7 @@ public class CertificationEmailService {
         }
 
         if(!storedVerificationCode.equals(verificationCode)) {
-            throw new CustomDataIntegerityCiolationException("인증번호가 일치하지 않습니다.");
+            throw new CustomDataIntegrityViolationException("인증번호가 일치하지 않습니다.");
         }
 
         updateUserEmailCertificationState(email);
