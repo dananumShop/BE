@@ -71,9 +71,21 @@ public class ProductAdminController {
 
         return ResponseEntity.ok(CommonResponseDto.successResponse("재고를 수정하였습니다."));
     }
-//
-//    @Operation(summary = "상품 수정", description = "상품 수정을 다루는 api입니다.")
-//
-//
+
+    @Operation(summary = "상품 수정", description = "상품 수정을 다루는 api입니다.")
+    @PutMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CommonResponseDto> editProduct(
+            @AuthenticationPrincipal User user,
+            @RequestParam Long productCid,
+            @RequestPart(name = "productInformation", required = false) @Parameter(schema = @Schema(type = "string", format = "binary")) AddProductReqDto addProductReq,
+            @RequestPart(name = "productInformationImg", required = false) List<MultipartFile> productInformationImg
+    ) {
+        log.debug("[PRODUCT_ADMIN] 물품 수정 요청이 들어왔습니다.");
+        adminProductService.editProduct(user, productCid, addProductReq, productInformationImg);
+        log.debug("[PRODUCT_ADMIN] 물품 수정 작업을 성공적으로 완료하였습니다.");
+
+        return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("물품 수정 완료"));
+    }
+
 //    @Operation(summary = "상품 삭제", description = "상품 삭제를 다루는 api입니다.")
 }

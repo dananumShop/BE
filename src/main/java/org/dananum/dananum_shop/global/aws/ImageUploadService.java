@@ -2,10 +2,7 @@ package org.dananum.dananum_shop.global.aws;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.internal.Mimetypes;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,5 +96,18 @@ public class ImageUploadService {
         public ImageUploadExeception(){
             super("이미지 업로드 오류가 발생하였습니다.");
         }
+    }
+
+
+    public void deleteImage(String productImagePath) {
+        String key = extractKey(productImagePath);
+        log.info("[test]" + key);
+        DeleteObjectRequest deleteRequest = new DeleteObjectRequest(bucketName, key);
+        amazonS3.deleteObject(deleteRequest);
+    }
+
+    private String extractKey(String productImagePath){
+        String baseUrl = "https://" + bucketName + ".s3.ap-northeast-2.amazonaws.com/";
+        return productImagePath.substring(baseUrl.length());
     }
 }

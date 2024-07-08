@@ -2,16 +2,21 @@ package org.dananum.dananum_shop.product.service;
 
 import lombok.RequiredArgsConstructor;
 import org.dananum.dananum_shop.global.aws.ImageUploadService;
+import org.dananum.dananum_shop.product.repository.ProductInformationImgRepository;
 import org.dananum.dananum_shop.product.repository.ProductOptionRepository;
 import org.dananum.dananum_shop.product.repository.ProductRepository;
 import org.dananum.dananum_shop.product.util.ProductValidation;
 import org.dananum.dananum_shop.product.web.dto.crud.AddProductOptionReqDto;
 import org.dananum.dananum_shop.product.web.dto.crud.AddProductReqDto;
 import org.dananum.dananum_shop.product.web.entity.ProductEntity;
+import org.dananum.dananum_shop.product.web.entity.ProductInformationImgEntity;
 import org.dananum.dananum_shop.product.web.entity.ProductOptionEntity;
 import org.dananum.dananum_shop.user.util.UserValidation;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -22,6 +27,7 @@ public class AdminProductService {
 
     private final ProductRepository productRepository;
     private final ProductOptionRepository productOptionRepository;
+    private final ProductInformationImgRepository productInformationImgRepository;
 
     private final UserValidation userValidation;
     private final ProductValidation productValidation;
@@ -85,4 +91,75 @@ public class AdminProductService {
 
         productOptionRepository.save(targetOption);
     }
+
+    /**
+     * 상품 정보를 수정하는 메서드
+     *
+     * @param user 관리자 권한을 가진 사용자
+     * @param productCid 수정할 상품의 ID
+     * @param addProductReq 수정할 상품의 정보 요청 DTO
+     * @param productInformationImg 수정할 상품의 이미지 리스트
+     */
+    public void editProduct(User user, Long productCid, AddProductReqDto addProductReq, List<MultipartFile> productInformationImg) {
+        userValidation.validateAdminRole(user);
+
+        ProductEntity targetProduct =  productValidation.validateExistProduct(productCid);
+
+        if(addProductReq != null) {
+            editProductInfo(targetProduct, addProductReq);
+        }
+
+        if(productInformationImg != null) {
+            editProductInfoImg(targetProduct, productInformationImg);
+        }
+
+        productRepository.save(targetProduct);
+    }
+
+    /**
+     * 상품의 기본 정보를 수정하는 메서드
+     *
+     * @param targetProduct 수정할 대상 상품
+     * @param addProductReqDto 수정할 상품의 정보 요청 DTO
+     */
+    private void editProductInfo(ProductEntity targetProduct, AddProductReqDto addProductReqDto) {
+        if(addProductReqDto.getProductName() != null && !addProductReqDto.getProductName().isEmpty()) {
+            targetProduct.setProductName(addProductReqDto.getProductName());
+        }
+
+        if(addProductReqDto.getProductCategory() != null) {
+            targetProduct.setProductCategory(addProductReqDto.getProductCategory());
+        }
+    }
+
+    /**
+     * 상품의 이미지를 수정하는 메서드
+     *
+     * @param targetProduct 수정할 대상 상품
+     * @param productInfoImg 수정할 상품의 이미지 리스트
+     */
+    private void editProductInfoImg(ProductEntity targetProduct, List<MultipartFile> productInfoImg) {
+        List<ProductInformationImgEntity> oldImageList = productInformationImgRepository.findByProductEntity(targetProduct);
+
+        productInformationImgRepository.deleteAll(oldImageList);
+
+        imageUploadService.uploadProductInformation(productInfoImg, "product_information_img", targetProduct);
+
+        deleteImagesFromS3(oldImageList);
+    }
+
+    /**
+     * S3에서 이미지를 비동기적으로 삭제하는 메서드
+     *
+     * @param images 삭제할 이미지 엔티티 리스트
+     */
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void deleteImagesFromS3(List<ProductInformationImgEntity> images) {
+        for (ProductInformationImgEntity image : images) {
+            imageUploadService.deleteImage(image.getImagePath());
+        }
+    }
+
+
 }
