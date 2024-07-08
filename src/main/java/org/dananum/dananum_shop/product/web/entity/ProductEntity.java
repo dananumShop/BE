@@ -34,6 +34,7 @@ public class ProductEntity extends TimeEntity {
     @Column(name = "product_category")
     private ProductCategory productCategory;
 
+
     public static ProductEntity from(final AddProductReqDto addProductReqDto) {
         return ProductEntity.builder()
                 .productName(addProductReqDto.getProductName())
