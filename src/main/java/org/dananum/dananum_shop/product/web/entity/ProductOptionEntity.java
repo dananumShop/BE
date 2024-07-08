@@ -22,10 +22,10 @@ public class ProductOptionEntity extends TimeEntity {
     @Schema(description = "상품옵션 고유 아이디")
     private Long productOptionCid;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "product_cid", nullable = false)
     @NotNull
-    @Schema(description = "상품 카테고리", example = "cloth")
+    @Schema(description = "상품 cid", example = "cloth")
     @Column(name = "product_category")
     private ProductEntity productEntity;
 
