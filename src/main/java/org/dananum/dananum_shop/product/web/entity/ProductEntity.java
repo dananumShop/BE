@@ -7,6 +7,8 @@ import lombok.*;
 import org.dananum.dananum_shop.global.web.entity.TimeEntity;
 import org.dananum.dananum_shop.global.web.enums.ProductCategory;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -25,11 +27,4 @@ public class ProductEntity extends TimeEntity {
     @Schema(description = "상품 카테고리", example = "cloth")
     @Column(name = "product_category")
     private ProductCategory productCategory;
-
-//    옵션 entity랑 연결
-//    @NotNull
-//    @Schema(description = "옵션 cid", example = "1")
-//    @Column(name = "product_oprion_cid")
-//    private ProductCategory productCategory;
-
 }
