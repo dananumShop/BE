@@ -46,4 +46,9 @@ public class ProductOptionEntity extends TimeEntity {
                 .stock(addProductOptionReqDto.getStock())
                 .build();
     }
+
+    public ProductOptionEntity updateOptionStock(int newStock) {
+        this.stock = newStock;
+        return this;
+    }
 }

@@ -66,4 +66,23 @@ public class AdminProductService {
             productOptionRepository.save(ProductOptionEntity.from(option, targetProduct));
         }
     }
+
+    /**
+     * 기능 - 옵션 재고 수정
+     *
+     * @param user 관리자 권한을 가진 사용자
+     * @param optionCid 대상 옵션의 ID
+     * @param newStock 새로운 재고 수량
+     *
+     * @return void
+     */
+    public void updateOptionStock(User user, Long optionCid, int newStock) {
+        userValidation.validateAdminRole(user);
+
+        ProductOptionEntity targetOption = productValidation.validateExistOption(optionCid);
+
+        targetOption.updateOptionStock(newStock);
+
+        productOptionRepository.save(targetOption);
+    }
 }

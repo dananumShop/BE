@@ -36,7 +36,7 @@ public class ProductAdminController {
             @AuthenticationPrincipal User user,
             @RequestPart(name = "productInformation") @Parameter(schema = @Schema(type = "string", format = "binary")) AddProductReqDto addProductReq,
             @RequestPart(name = "productInformationImg") List<MultipartFile> productInformationImg
-            ) {
+    ) {
         log.debug("[PRODUCT_ADMIN] 물품 추가 요청이 들어왔습니다.");
         Long productCid = adminProductService.addProduct(user, addProductReq, productInformationImg);
         log.debug("[PRODUCT_ADMIN] 물품 추가 작업을 성공적으로 완료하였습니다.");
@@ -50,14 +50,27 @@ public class ProductAdminController {
             @AuthenticationPrincipal User user,
             @RequestParam Long productCid,
             @RequestBody List<AddProductOptionReqDto> addProductOptionReqList
-            ) {
+    ) {
         log.debug("[PRODUCT_ADMIN] 물품 옵션 추가 요청이 들어왔습니다.");
-        adminProductService.addProductOption(user,productCid, addProductOptionReqList);
+        adminProductService.addProductOption(user, productCid, addProductOptionReqList);
         log.debug("[PRODUCT_ADMIN] 물품 옵션 추가 작업을 성공적으로 완료하였습니다.");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponseDto.createSuccessResponse("물품 옵션 추가 완료"));
     }
 
+    @Operation(summary = "재고 수정", description = "옵션의 재고를 수정하는 api입니다.")
+    @PutMapping("/option-stock")
+    public ResponseEntity<CommonResponseDto> updateOptionStock(
+            @AuthenticationPrincipal User user,
+            @RequestParam Long optionCid,
+            @RequestParam int newStock
+    ) {
+        log.debug("[PRODUCT_ADMIN] 재고 수정 요청이 들어왔습니다.");
+        adminProductService.updateOptionStock(user, optionCid, newStock);
+        log.debug("[PRODUCT_ADMIN] 재고 수정을 완료했습니다.");
+
+        return ResponseEntity.ok(CommonResponseDto.successResponse("재고를 수정하였습니다."));
+    }
 //
 //    @Operation(summary = "상품 수정", description = "상품 수정을 다루는 api입니다.")
 //
