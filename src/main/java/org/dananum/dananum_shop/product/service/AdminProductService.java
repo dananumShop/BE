@@ -149,6 +149,51 @@ public class AdminProductService {
     }
 
     /**
+     * 상품을 삭제하는 메서드
+     *
+     * @param user 관리자 권한을 가진 사용자
+     * @param productCid 삭제할 상품의 ID
+     */
+    public void deleteProduct(User user, Long productCid) {
+        userValidation.validateAdminRole(user);
+
+        ProductEntity targetProduct =  productValidation.validateExistProduct(productCid);
+
+        deleteProductOption(targetProduct);
+        List<ProductInformationImgEntity> imageList = deleteProductInfoImage(targetProduct);
+
+        productRepository.delete(targetProduct);
+
+        deleteImagesFromS3(imageList);
+    }
+
+    /**
+     * 상품에 연결된 옵션을 삭제하는 메서드
+     *
+     * @param targetProduct 삭제할 대상 상품
+     */
+    private void deleteProductOption(ProductEntity targetProduct) {
+        List<ProductOptionEntity> optionList = productOptionRepository.findByProductEntity(targetProduct);
+
+        productOptionRepository.deleteAll(optionList);
+    }
+
+    /**
+     * 상품에 연결된 이미지를 삭제하고 이미지 리스트를 반환하는 메서드
+     *
+     * @param targetProduct 삭제할 대상 상품
+     * @return 삭제된 상품 이미지 리스트
+     */
+    private List<ProductInformationImgEntity> deleteProductInfoImage(ProductEntity targetProduct) {
+        List<ProductInformationImgEntity> imageList = productInformationImgRepository.findByProductEntity(targetProduct);
+
+        productInformationImgRepository.deleteAll(imageList);
+
+        return imageList;
+    }
+
+
+    /**
      * S3에서 이미지를 비동기적으로 삭제하는 메서드
      *
      * @param images 삭제할 이미지 엔티티 리스트
@@ -160,6 +205,4 @@ public class AdminProductService {
             imageUploadService.deleteImage(image.getImagePath());
         }
     }
-
-
 }

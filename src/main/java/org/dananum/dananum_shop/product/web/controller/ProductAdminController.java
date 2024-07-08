@@ -87,5 +87,17 @@ public class ProductAdminController {
         return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("물품 수정 완료"));
     }
 
-//    @Operation(summary = "상품 삭제", description = "상품 삭제를 다루는 api입니다.")
+    @Operation(summary = "상품 삭제", description = "상품 삭제를 다루는 api입니다.")
+    @DeleteMapping("/")
+    public ResponseEntity<CommonResponseDto> deleteProduct(
+            @AuthenticationPrincipal User user,
+            @RequestParam Long productCid
+    ) {
+        log.debug("[PRODUCT_ADMIN] 물품 삭제 요청이 들어왔습니다.");
+        adminProductService.deleteProduct(user, productCid);
+        log.debug("[PRODUCT_ADMIN] 물품을 삭제하였습니다..");
+
+        return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("물품 삭제 완료"));
+    }
 }
+
