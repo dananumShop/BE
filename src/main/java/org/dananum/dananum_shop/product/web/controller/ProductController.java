@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "[PUBLIC] 상품 API")
 public class ProductController {
 
-    @Operation(summary = "전체 상품 조회", description = "전체 상품을 조회하는 api입니다.")
-
-
-    @Operation(summary = "카테고리별 상품 조회", description = "카테고리별 상품을 조회하는 api입니다.")
-
-
-    @Operation(summary = "상품 상세 조회", description = "상품의 상세내용을 조회하는 api입니다.")
+//    @Operation(summary = "전체 상품 조회", description = "전체 상품을 조회하는 api입니다.")
+//
+//
+//    @Operation(summary = "카테고리별 상품 조회", description = "카테고리별 상품을 조회하는 api입니다.")
+//
+//
+//    @Operation(summary = "상품 상세 조회", description = "상품의 상세내용을 조회하는 api입니다.")
 }

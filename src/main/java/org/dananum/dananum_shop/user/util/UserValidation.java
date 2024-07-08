@@ -5,10 +5,12 @@ import org.dananum.dananum_shop.global.web.advice.exception.CustomAccessDeniedEx
 import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegrityViolationException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.dananum.dananum_shop.global.web.enums.AccountStatus;
+import org.dananum.dananum_shop.global.web.enums.Roles;
 import org.dananum.dananum_shop.user.repository.UserRepository;
 import org.dananum.dananum_shop.user.web.dto.login.LoginReqDto;
 import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,15 @@ public class UserValidation {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    public void validateAdminRole(User user) {
+        UserEntity targetUser = userRepository.findByUserEmail(user.getUsername())
+                .orElseThrow(()-> new CustomNotFoundException("유저가 존재하지 않습니다."));
+
+        if(targetUser.getUserRole() != Roles.ROLE_ADMIN) {
+            throw new CustomAccessDeniedException("관지자 권한이 없습니다.");
+        };
+    }
 
     // 이메일 중복 확인
     public void validateDuplicateEmail(String email) {

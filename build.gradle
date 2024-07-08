@@ -62,6 +62,9 @@ dependencies {
     // Spring Context Support
     implementation 'org.springframework:spring-context-support:5.3.9'
 
+    // AWS-Image
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 }
 
 tasks.named('test') {

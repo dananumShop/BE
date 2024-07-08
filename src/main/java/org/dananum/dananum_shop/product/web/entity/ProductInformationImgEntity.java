@@ -23,9 +23,7 @@ public class ProductInformationImgEntity extends TimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_cid", nullable = false)
-    @NotNull
     @Schema(description = "상품 cid", example = "1")
-    @Column(name = "product_category")
     private ProductEntity productEntity;
 
     @NotNull
@@ -42,4 +40,13 @@ public class ProductInformationImgEntity extends TimeEntity {
     @Schema(description = "이미지 순서")
     @Column(name = "image_order")
     private int imageOrder;
+
+    public static ProductInformationImgEntity from(final String imageName, final String imagePath, final int imageOrder, final ProductEntity newProduct) {
+        return ProductInformationImgEntity.builder()
+                .imageName(imageName)
+                .imagePath(imagePath)
+                .imageOrder(imageOrder)
+                .productEntity(newProduct)
+                .build();
+    }
 }

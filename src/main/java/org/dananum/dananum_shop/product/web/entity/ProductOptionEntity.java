@@ -7,6 +7,7 @@ import lombok.*;
 import org.dananum.dananum_shop.global.web.entity.TimeEntity;
 import org.dananum.dananum_shop.global.web.enums.ProductCategory;
 import org.dananum.dananum_shop.global.web.enums.ProductOptionSize;
+import org.dananum.dananum_shop.product.web.dto.crud.AddProductOptionReqDto;
 
 @Entity
 @Getter
@@ -26,7 +27,6 @@ public class ProductOptionEntity extends TimeEntity {
     @JoinColumn(name = "product_cid", nullable = false)
     @NotNull
     @Schema(description = "상품 cid", example = "cloth")
-    @Column(name = "product_category")
     private ProductEntity productEntity;
 
     @NotNull
@@ -38,4 +38,12 @@ public class ProductOptionEntity extends TimeEntity {
     @Schema(description = "옵션 재고", example = "12")
     @Column(name = "product_option_stock")
     private int stock;
+
+    public static ProductOptionEntity from(final AddProductOptionReqDto addProductOptionReqDto, final ProductEntity targetProduct) {
+        return ProductOptionEntity.builder()
+                .productEntity(targetProduct)
+                .size(addProductOptionReqDto.getSize())
+                .stock(addProductOptionReqDto.getStock())
+                .build();
+    }
 }

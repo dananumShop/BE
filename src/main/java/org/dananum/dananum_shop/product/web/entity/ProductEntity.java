@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.dananum.dananum_shop.global.web.entity.TimeEntity;
 import org.dananum.dananum_shop.global.web.enums.ProductCategory;
+import org.dananum.dananum_shop.product.web.dto.crud.AddProductReqDto;
 
 import java.util.List;
 
@@ -24,7 +25,19 @@ public class ProductEntity extends TimeEntity {
     private Long productCid;
 
     @NotNull
+    @Schema(description = "상품 이름", example = "양말")
+    @Column(name = "product_name")
+    private String productName;
+
+    @NotNull
     @Schema(description = "상품 카테고리", example = "cloth")
     @Column(name = "product_category")
     private ProductCategory productCategory;
+
+    public static ProductEntity from(final AddProductReqDto addProductReqDto) {
+        return ProductEntity.builder()
+                .productName(addProductReqDto.getProductName())
+                .productCategory(addProductReqDto.getProductCategory())
+                .build();
+    }
 }
