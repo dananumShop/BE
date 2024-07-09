@@ -48,6 +48,7 @@ public class AdminProductService {
      *
      * @return 생성된 상품의 ID
      */
+    @Transactional
     public Long addProduct(
             User user, AddProductReqDto addProductReq,
             List<MultipartFile> productDetailImg,
@@ -73,6 +74,7 @@ public class AdminProductService {
      *
      * @return void
      */
+    @Transactional
     public void addProductOption(User user, Long productCid, List<AddProductOptionReqDto> addProductOptionReqList) {
         userValidation.validateAdminRole(user);
 
@@ -92,6 +94,7 @@ public class AdminProductService {
      *
      * @return void
      */
+    @Transactional
     public void updateOptionStock(User user, Long optionCid, int newStock) {
         userValidation.validateAdminRole(user);
 
@@ -110,6 +113,7 @@ public class AdminProductService {
      * @param addProductReq 수정할 상품의 정보 요청 DTO
      * @param productInformationImg 수정할 상품의 이미지 리스트
      */
+    @Transactional
     public void editProduct(User user, Long productCid, AddProductReqDto addProductReq, List<MultipartFile> productDetailImg, List<MultipartFile> productInformationImg) {
         userValidation.validateAdminRole(user);
 
@@ -185,6 +189,7 @@ public class AdminProductService {
      * @param user 관리자 권한을 가진 사용자
      * @param productCid 삭제할 상품의 ID
      */
+    @Transactional
     public void deleteProduct(User user, Long productCid) {
         userValidation.validateAdminRole(user);
 
