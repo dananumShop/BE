@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.web.enums.ProductCategory;
+import org.dananum.dananum_shop.global.web.enums.ProductGender;
 import org.dananum.dananum_shop.product.service.ProductService;
 import org.dananum.dananum_shop.product.web.dto.list.ProductDetailDto;
 import org.dananum.dananum_shop.product.web.dto.list.allProduct.GetAllProductResDto;
@@ -45,8 +46,23 @@ public class ProductController {
         List<ProductDetailDto> productDetailList = productService.getProductByCategory(category, page);
         log.debug("[PRODUCT_PUBLIC] 카테고리 상품을 조회했습니다.");
 
-        return ResponseEntity.ok(GetAllProductResDto.successResponse("전체 상품을 조회했습니다.", productDetailList));
+        return ResponseEntity.ok(GetAllProductResDto.successResponse("카테고리별 상품을 조회했습니다.", productDetailList));
     }
+
+    @Operation(summary = "성별 상품 조회", description = "성별에 따른 상품을 조회하는 api입니다.")
+    @GetMapping("/gender-product/{page}")
+    public ResponseEntity<GetAllProductResDto> getProductByGender(
+            @PathVariable int page,
+            @RequestParam ProductGender gender
+    ) {
+        log.debug("[PRODUCT_PUBLIC] 카테고리 상품 조회 요청이 들어왔습니다.");
+        List<ProductDetailDto> productDetailList = productService.getProductByGender(gender, page);
+        log.debug("[PRODUCT_PUBLIC] 카테고리 상품을 조회했습니다.");
+
+        return ResponseEntity.ok(GetAllProductResDto.successResponse("성별에 따른 상품을 조회했습니다.", productDetailList));
+    }
+
+
 
 //    @Operation(summary = "상품 상세 조회", description = "상품의 상세내용을 조회하는 api입니다.")
 //    @GetMapping("/detail")
