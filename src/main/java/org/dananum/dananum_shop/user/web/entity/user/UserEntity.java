@@ -69,6 +69,16 @@ public class UserEntity extends TimeEntity {
                 .build();
     }
 
+    public UserEntity updateUserPassword(String newPwd) {
+        this.userPassword = newPwd;
+        return this;
+    }
+
+    public UserEntity updateUserName(String newName) {
+        this.userName = newName;
+        return this;
+    }
+
     public UserEntity updateAccountStatus(AccountStatus accountStatus) {
         if(accountStatus == AccountStatus.ACTIVE) {
             this.accountStatus = AccountStatus.DELETED;

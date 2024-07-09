@@ -17,9 +17,6 @@ public class SignupReqDto {
     @Schema(description = "유저 이름", example = "테스터")
     private String userName;
 
-    @Schema(description = "유저 닉네임", example = "test")
-    private String userNickname;
-
     @Schema(description = "비밀번호", example = "test")
     private String userPassword;
 }

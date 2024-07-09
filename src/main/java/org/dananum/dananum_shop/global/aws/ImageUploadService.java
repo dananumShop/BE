@@ -11,6 +11,9 @@ import org.dananum.dananum_shop.product.repository.ProductInformationImgReposito
 import org.dananum.dananum_shop.product.web.entity.ProductDetailImgEntity;
 import org.dananum.dananum_shop.product.web.entity.ProductEntity;
 import org.dananum.dananum_shop.product.web.entity.ProductInformationImgEntity;
+import org.dananum.dananum_shop.user.repository.UserProfileImgRepository;
+import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
+import org.dananum.dananum_shop.user.web.entity.user.UserProfileImgEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +33,7 @@ public class ImageUploadService {
 
     private final ProductInformationImgRepository productInformationImgRepository;
     private final ProductDetailImgRepository productDetailImgRepository;
+    private final UserProfileImgRepository userProfileImgRepository;
 
     @Value("${cloud.aws.s3.bucketName}")
     private String bucketName;
@@ -72,11 +76,9 @@ public class ImageUploadService {
      * @param images 업로드할 이미지 파일 목록을 나타내는 List<MultipartFile>
      * @param folderName 이미지가 저장될 S3 폴더 이름
      * @param newProduct 이 이미지들과 연관된 ProductEntity
-     * @return 업로드된 ProductInformationImgEntity 목록
      */
-    public List<ProductInformationImgEntity> uploadProductInformation(List<MultipartFile> images, String folderName, ProductEntity newProduct) {
+    public void uploadProductInformation(List<MultipartFile> images, String folderName, ProductEntity newProduct) {
 
-        List<ProductInformationImgEntity> uploadedImages = new ArrayList<>();
         int index = 0;
 
         for(MultipartFile image : images){
@@ -89,12 +91,9 @@ public class ImageUploadService {
 
             productInformationImgRepository.save(newProductImage);
 
-            uploadedImages.add(newProductImage);
-
             index++;
         }
 
-        return uploadedImages;
     }
 
     /**
@@ -103,11 +102,8 @@ public class ImageUploadService {
      * @param images 업로드할 이미지 파일 목록을 나타내는 List<MultipartFile>
      * @param folderName 이미지가 저장될 S3 폴더 이름
      * @param newProduct 이 이미지들과 연관된 ProductEntity
-     * @return 업로드된 ProductDetailImgEntity 목록
      */
-    public List<ProductDetailImgEntity> uploadProductDetail(List<MultipartFile> images, String folderName, ProductEntity newProduct) {
-
-        List<ProductDetailImgEntity> uploadedImages = new ArrayList<>();
+    public void uploadProductDetail(List<MultipartFile> images, String folderName, ProductEntity newProduct) {
         int index = 0;
 
         for(MultipartFile image : images){
@@ -120,12 +116,26 @@ public class ImageUploadService {
 
             productDetailImgRepository.save(newProductImage);
 
-            uploadedImages.add(newProductImage);
-
             index++;
         }
+    }
 
-        return uploadedImages;
+    /**
+     * 유저 프로필 이미지를 Amazon S3에 업로드합니다.
+     *
+     * @param image 업로드할 이미지 파일
+     * @param folderName 이미지가 저장될 S3 폴더 이름
+     * @param user 이 이미지와 연관된 UserEntity
+     */
+    public void uploadProfileImg(MultipartFile image, String folderName, UserEntity user) {
+        String originName = image.getOriginalFilename();
+        String storedImagedPath = uploadImageToS3(image, folderName);
+
+        log.debug("[UPLOAD] 이미지가 s3업데이트 메서드로 넘어갈 예정입니다. originName = " + originName);
+
+        UserProfileImgEntity newProfileImage = UserProfileImgEntity.from(originName, storedImagedPath, user);
+
+        userProfileImgRepository.save(newProfileImage);
     }
 
 
