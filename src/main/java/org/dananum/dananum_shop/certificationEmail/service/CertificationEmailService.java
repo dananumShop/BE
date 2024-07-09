@@ -30,9 +30,6 @@ public class CertificationEmailService {
     private final JavaMailSender mailSender;
     private final EmailService emailService;
     private final EmailRepository emailRepository;
-    private final UserRepository userRepository;
-
-    private final UserValidation userValidation;
 
     private final String verificationCode = generateRandomNumber(100000, 999999);
 
@@ -42,8 +39,6 @@ public class CertificationEmailService {
     private final long EXPIRE_TIME = 60*5;
 
     public void joinEmail(EmailReqDto emailReqDto) {
-
-        UserEntity user = userValidation.findUserByUserEmail(emailReqDto.getEmail());
 
         String title = "[쇼핑몰 인증] 쇼핑몰 가입 인증번호";
         String content =
@@ -56,20 +51,20 @@ public class CertificationEmailService {
                         "<p>감사합니다!<br>쇼핑몰 팀</p>" +
                         "</div>";
 
-        mailSend(user, title, content);
+        mailSend(emailReqDto, title, content);
     }
 
     @Transactional
-    public void mailSend(UserEntity user, String title, String content) {
+    public void mailSend(EmailReqDto emailReqDto, String title, String content) {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
             helper.setFrom(emailAddress);
-            helper.setTo(user.getUserEmail());
+            helper.setTo(emailReqDto.getEmail());
             helper.setSubject(title);
             helper.setText(content, true);
             mailSender.send(message);
-            emailService.setEmailInfo(user, verificationCode);
+            emailService.setEmailInfo(emailReqDto, verificationCode);
         } catch (MessagingException e) {
             log.info(e.getMessage());
         }
@@ -84,7 +79,7 @@ public class CertificationEmailService {
     }
 
     public void checkAuthNum(String email, String verificationCode) {
-        EmailEntity emailEntity = emailRepository.findByUserEmail(email)
+        EmailEntity emailEntity = emailRepository.findById(email)
                 .orElseThrow(() -> new CustomNotFoundException("일치하는 이메일이 없습니다."));
 
         String storedVerificationCode = emailEntity.getVerificationCode();
@@ -96,16 +91,6 @@ public class CertificationEmailService {
         if(!storedVerificationCode.equals(verificationCode)) {
             throw new CustomDataIntegrityViolationException("인증번호가 일치하지 않습니다.");
         }
-
-        updateUserEmailCertificationState(email);
     }
 
-    private void updateUserEmailCertificationState(String email) {
-
-        UserEntity user = userRepository.findByUserEmail(email)
-                .orElseThrow(() -> new CustomNotFoundException("일치하는 유저가 없습니다."));
-
-        user.updateEmailCertificationState(EmailCertificationState.COMPLETED);
-        userRepository.save(user);
-    }
 }
