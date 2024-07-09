@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.dananum.dananum_shop.global.web.entity.TimeEntity;
 
 @Entity
 @Getter
@@ -12,13 +11,13 @@ import org.dananum.dananum_shop.global.web.entity.TimeEntity;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "product_Thumbnail")
-public class ProductThumbnailEntity extends TimeEntity {
+@Table(name = "productdetail_image")
+public class ProductDetailImgEntity {
     @Id
-    @Column(name = "product_cid")
+    @Column(name = "product_detail_image_cid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "상품 썸네일 아이디")
-    private Long productThumbnailCid;
+    @Schema(description = "상품 세부 사진 아이디")
+    private Long productDetailImgCid;
 
     @ManyToOne
     @JoinColumn(name = "product_cid", nullable = false)
@@ -35,10 +34,16 @@ public class ProductThumbnailEntity extends TimeEntity {
     @Column(name = "image_name")
     private String imageName;
 
-    public static ProductThumbnailEntity from(final String imageName, final String imagePath, final ProductEntity newProduct) {
-        return ProductThumbnailEntity.builder()
+    @NotNull
+    @Schema(description = "이미지 순서")
+    @Column(name = "image_order")
+    private int imageOrder;
+
+    public static ProductDetailImgEntity from(final String imageName, final String imagePath, final int imageOrder, final ProductEntity newProduct) {
+        return ProductDetailImgEntity.builder()
                 .imageName(imageName)
                 .imagePath(imagePath)
+                .imageOrder(imageOrder)
                 .productEntity(newProduct)
                 .build();
     }

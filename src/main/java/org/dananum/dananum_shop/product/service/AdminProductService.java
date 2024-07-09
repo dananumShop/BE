@@ -42,7 +42,10 @@ public class AdminProductService {
      *
      * @return 생성된 상품의 ID
      */
-    public Long addProduct(User user, AddProductReqDto addProductReq, List<MultipartFile> productInformationImg) {
+    public Long addProduct(
+            User user, AddProductReqDto addProductReq,
+            List<MultipartFile> productDetailImg,
+            List<MultipartFile> productInformationImg) {
         userValidation.validateAdminRole(user);
 
         ProductEntity newProduct = ProductEntity.from(addProductReq);
@@ -50,6 +53,7 @@ public class AdminProductService {
         productRepository.save(newProduct);
 
         imageUploadService.uploadProductInformation(productInformationImg, "product_information_img", newProduct);
+        imageUploadService.uploadProductDetail(productDetailImg, "product_detail_img", newProduct);
 
         return newProduct.getProductCid();
     }

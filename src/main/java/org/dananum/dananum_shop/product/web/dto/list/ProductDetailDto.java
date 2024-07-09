@@ -2,8 +2,8 @@ package org.dananum.dananum_shop.product.web.dto.list;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+import org.dananum.dananum_shop.product.web.entity.ProductDetailImgEntity;
 import org.dananum.dananum_shop.product.web.entity.ProductEntity;
-import org.dananum.dananum_shop.product.web.entity.ProductThumbnailEntity;
 
 @Getter
 @Setter
@@ -21,7 +21,7 @@ public class ProductDetailDto {
     @Schema(description = "상품 썸네일")
     private String productThumbnail;
 
-    public static ProductDetailDto from(ProductEntity productEntity, ProductThumbnailEntity productThumbnail) {
+    public static ProductDetailDto from(ProductEntity productEntity, ProductDetailImgEntity productThumbnail) {
         return ProductDetailDto.builder()
                 .productCid(productEntity.getProductCid())
                 .productName(productEntity.getProductName())

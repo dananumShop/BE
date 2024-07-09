@@ -35,10 +35,11 @@ public class ProductAdminController {
     public ResponseEntity<AddProductResDto> createProduct(
             @AuthenticationPrincipal User user,
             @RequestPart(name = "productInformation") @Parameter(schema = @Schema(type = "string", format = "binary")) AddProductReqDto addProductReq,
+            @RequestPart(name = "productDetailImg") List<MultipartFile> productDetailImg,
             @RequestPart(name = "productInformationImg") List<MultipartFile> productInformationImg
     ) {
         log.debug("[PRODUCT_ADMIN] 물품 추가 요청이 들어왔습니다.");
-        Long productCid = adminProductService.addProduct(user, addProductReq, productInformationImg);
+        Long productCid = adminProductService.addProduct(user, addProductReq, productDetailImg, productInformationImg);
         log.debug("[PRODUCT_ADMIN] 물품 추가 작업을 성공적으로 완료하였습니다.");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(AddProductResDto.createSuccessResponse("물품 추가 완료", productCid));
