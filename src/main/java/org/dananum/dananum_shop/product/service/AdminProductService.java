@@ -154,7 +154,7 @@ public class AdminProductService {
      * @param productDetailImg 수정할 상품의 이미지 리스트
      */
     private void editProductDetailImg(ProductEntity targetProduct, List<MultipartFile> productDetailImg) {
-        List<ProductDetailImgEntity> oldImageList = productDetailImgRepository.findByProductEntity(targetProduct);
+        List<ProductDetailImgEntity> oldImageList = productDetailImgRepository.findAllByProductEntity(targetProduct);
 
         productDetailImgRepository.deleteAll(oldImageList);
 
@@ -218,7 +218,7 @@ public class AdminProductService {
      * @return 삭제된 상품 이미지 리스트
      */
     private List<ProductDetailImgEntity> deleteProductDetailImage(ProductEntity targetProduct) {
-        List<ProductDetailImgEntity> imageList = productDetailImgRepository.findByProductEntity(targetProduct);
+        List<ProductDetailImgEntity> imageList = productDetailImgRepository.findAllByProductEntity(targetProduct);
 
         productDetailImgRepository.deleteAll(imageList);
 

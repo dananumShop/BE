@@ -19,5 +19,5 @@ public interface ProductDetailImgRepository extends JpaRepository<ProductDetailI
      */
     ProductDetailImgEntity findTopByProductEntityOrderByImageOrderAsc(ProductEntity productEntity);
 
-    List<ProductDetailImgEntity> findByProductEntity(ProductEntity targetProduct);
+    List<ProductDetailImgEntity> findAllByProductEntity(ProductEntity targetProduct);
 }
