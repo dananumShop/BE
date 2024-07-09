@@ -5,9 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.web.dto.CommonResponseDto;
-import org.dananum.dananum_shop.global.web.enums.AccountStatus;
 import org.dananum.dananum_shop.user.service.UserService;
-import org.dananum.dananum_shop.user.web.dto.getUser.GetUserVerificationDto;
+import org.dananum.dananum_shop.user.web.dto.getUser.GetUserRoleResDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -26,11 +25,11 @@ public class UserController {
     private final UserService userService;
 
 
-    @Operation(summary = "유저 이메일 인증상태 조회", description = "이메일 인증상태를 확인하기 위한 api입니다.")
+    @Operation(summary = "유저 권한 조회", description = "이메일 권한 확인하기 위한 api입니다.")
     @GetMapping("/verification")
-    public ResponseEntity<GetUserVerificationDto> getUserVerification(@AuthenticationPrincipal User user) {
+    public ResponseEntity<GetUserRoleResDto> getUserVerification(@AuthenticationPrincipal User user) {
         log.debug("[USER] 유저의 인증 상태 조회 요청이 들어왔습니다.");
-        GetUserVerificationDto userVerification = userService.getUserVerification(user);
+        GetUserRoleResDto userVerification = userService.getUserRole(user);
         log.debug("[USER] 유저의 인증상태를 성공적으로 불러왔습니다.");
 
         return ResponseEntity.ok(userVerification);
