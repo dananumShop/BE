@@ -35,10 +35,11 @@ public class ProductAdminController {
     public ResponseEntity<AddProductResDto> createProduct(
             @AuthenticationPrincipal User user,
             @RequestPart(name = "productInformation") @Parameter(schema = @Schema(type = "string", format = "binary")) AddProductReqDto addProductReq,
+            @RequestPart(name = "productDetailImg") List<MultipartFile> productDetailImg,
             @RequestPart(name = "productInformationImg") List<MultipartFile> productInformationImg
     ) {
         log.debug("[PRODUCT_ADMIN] 물품 추가 요청이 들어왔습니다.");
-        Long productCid = adminProductService.addProduct(user, addProductReq, productInformationImg);
+        Long productCid = adminProductService.addProduct(user, addProductReq, productDetailImg, productInformationImg);
         log.debug("[PRODUCT_ADMIN] 물품 추가 작업을 성공적으로 완료하였습니다.");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(AddProductResDto.createSuccessResponse("물품 추가 완료", productCid));
@@ -78,13 +79,14 @@ public class ProductAdminController {
             @AuthenticationPrincipal User user,
             @RequestParam Long productCid,
             @RequestPart(name = "productInformation", required = false) @Parameter(schema = @Schema(type = "string", format = "binary")) AddProductReqDto addProductReq,
+            @RequestPart(name = "productDetailImg") List<MultipartFile> productDetailImg,
             @RequestPart(name = "productInformationImg", required = false) List<MultipartFile> productInformationImg
     ) {
         log.debug("[PRODUCT_ADMIN] 물품 수정 요청이 들어왔습니다.");
-        adminProductService.editProduct(user, productCid, addProductReq, productInformationImg);
+        adminProductService.editProduct(user, productCid, addProductReq, productDetailImg, productInformationImg);
         log.debug("[PRODUCT_ADMIN] 물품 수정 작업을 성공적으로 완료하였습니다.");
 
-        return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("물품 수정 완료"));
+        return ResponseEntity.ok(CommonResponseDto.successResponse("물품 수정 완료"));
     }
 
     @Operation(summary = "상품 삭제", description = "상품 삭제를 다루는 api입니다.")
@@ -97,7 +99,20 @@ public class ProductAdminController {
         adminProductService.deleteProduct(user, productCid);
         log.debug("[PRODUCT_ADMIN] 물품을 삭제하였습니다..");
 
-        return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("물품 삭제 완료"));
+        return ResponseEntity.ok(CommonResponseDto.successResponse("물품 삭제 완료"));
+    }
+
+    @Operation(summary = "상품 옵션 삭제", description = "상품 옵션 삭제를 다루는 api입니다.")
+    @DeleteMapping("/option")
+    public ResponseEntity<CommonResponseDto> deleteProductOption(
+            @AuthenticationPrincipal User user,
+            @RequestParam Long productOptionCid
+    ) {
+        log.debug("[PRODUCT_ADMIN] 물품 삭제 요청이 들어왔습니다.");
+        adminProductService.deleteProductOption(user, productOptionCid);
+        log.debug("[PRODUCT_ADMIN] 물품을 삭제하였습니다..");
+
+        return ResponseEntity.ok(CommonResponseDto.successResponse("물품 옵션 삭제 완료"));
     }
 }
 
