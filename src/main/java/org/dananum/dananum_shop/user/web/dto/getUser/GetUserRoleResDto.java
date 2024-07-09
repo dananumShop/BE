@@ -11,17 +11,13 @@ import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class GetUserVerificationDto {
-
-    @Schema(description = "유저 이메일 인증 상태", example = "NEEDED")
-    private EmailCertificationState emailCertificationState;
+public class GetUserRoleResDto {
 
     @Schema(description = "유저 권한 정보", example = "ROLE_USER")
     private Roles role;
 
-    public static GetUserVerificationDto from(final UserEntity user) {
-        return GetUserVerificationDto.builder()
-                .emailCertificationState(user.getEmailCertificationState())
+    public static GetUserRoleResDto from(final UserEntity user) {
+        return GetUserRoleResDto.builder()
                 .role(user.getUserRole())
                 .build();
     }

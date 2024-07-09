@@ -59,11 +59,6 @@ public class UserEntity extends TimeEntity {
     @Enumerated(EnumType.STRING)
     private Roles userRole;
 
-    @NotNull
-    @Schema(description = "유저 인증상태", example = "NEEDED")
-    @Enumerated(EnumType.STRING)
-    private EmailCertificationState emailCertificationState;
-
     public static UserEntity from(final SignupReqDto signupInfo, final String password) {
         return UserEntity.builder()
                 .userEmail(signupInfo.getUserEmail())
@@ -71,13 +66,7 @@ public class UserEntity extends TimeEntity {
                 .userPassword(password)
                 .accountStatus(AccountStatus.ACTIVE)
                 .userRole(Roles.ROLE_USER)
-                .emailCertificationState(EmailCertificationState.NEEDED)
                 .build();
-    }
-
-    public UserEntity updateEmailCertificationState(EmailCertificationState newState) {
-        this.emailCertificationState = newState;
-        return this;
     }
 
     public UserEntity updateAccountStatus(AccountStatus accountStatus) {
