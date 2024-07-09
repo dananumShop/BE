@@ -1,6 +1,7 @@
 package org.dananum.dananum_shop.product.service;
 
 import lombok.RequiredArgsConstructor;
+import org.dananum.dananum_shop.global.web.enums.ProductCategory;
 import org.dananum.dananum_shop.product.repository.ProductRepository;
 import org.dananum.dananum_shop.product.repository.ProductThumbnailRepository;
 import org.dananum.dananum_shop.product.util.ProductValidation;
@@ -28,6 +29,19 @@ public class ProductService {
 
         Pageable pageable = PageRequest.of(page-1, 10);
         Page<ProductEntity> productList = productRepository.findAll(pageable);
+
+        return EntityToDto(productList);
+    }
+
+    public List<ProductDetailDto> getProductByCategory(ProductCategory category, int page) {
+        Pageable pageable = PageRequest.of(page-1, 10);
+        Page<ProductEntity> productList = productRepository.findAllByCategory(pageable);
+
+        return EntityToDto(productList);
+    }
+
+    private List<ProductDetailDto> EntityToDto(Page<ProductEntity> productList) {
+
         List<ProductDetailDto> productDetailDtoList = new ArrayList<>();
 
         productValidation.validateProductListIsEmpty(productList);
