@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.web.dto.CommonResponseDto;
 import org.dananum.dananum_shop.user.service.UserService;
 import org.dananum.dananum_shop.user.web.dto.edit.EditProfileReqDto;
+import org.dananum.dananum_shop.user.web.dto.getUser.GetUserInfoResDto;
+import org.dananum.dananum_shop.user.web.dto.getUser.UserInfoDto;
 import org.dananum.dananum_shop.user.web.dto.getUser.GetUserRoleResDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -81,5 +83,17 @@ public class UserController {
         log.debug("[USER] 프로필 이미지를 성공적으로 삭제했습니다.");
 
         return ResponseEntity.ok(CommonResponseDto.successResponse("프로필 이미지가 정상적으로 삭제되었습니다."));
+    }
+
+    @Operation(summary = "유저 정보 조회", description = "유저의 정보를 조회하는 api입니다.")
+    @GetMapping("/info")
+    public ResponseEntity<GetUserInfoResDto> getUserInfo(
+            @AuthenticationPrincipal User user
+    ) {
+        log.debug("[USER] 유저 정보 조회 요청이 들어왔습니다.");
+        UserInfoDto userInfo = userService.getUserInfo(user);
+        log.debug("[USER] 유저 정보를 성공적으로 불러왔습니다.");
+
+        return ResponseEntity.ok(GetUserInfoResDto.successResponse("유저 정보를 불러왔습니다.", userInfo));
     }
 }

@@ -12,6 +12,7 @@ import org.dananum.dananum_shop.user.repository.UserRepository;
 import org.dananum.dananum_shop.user.util.UserValidation;
 import org.dananum.dananum_shop.user.web.dto.edit.EditProfileReqDto;
 import org.dananum.dananum_shop.user.web.dto.getUser.GetUserRoleResDto;
+import org.dananum.dananum_shop.user.web.dto.getUser.UserInfoDto;
 import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.dananum.dananum_shop.user.web.entity.user.UserProfileImgEntity;
 import org.springframework.scheduling.annotation.Async;
@@ -168,5 +169,17 @@ public class UserService {
                 .orElseThrow(() -> new CustomNotFoundException("프로필 이미지가 없습니다."));
 
         userProfileImgRepository.delete(oldProfileImg);
+    }
+
+    /**
+     * 유저의 정보를 불러옵니다.
+     *
+     * @param user 현재 로그인한 사용자 엔티티
+     * @return UserInfoDto 유저의 정보를 담은 dto
+     */
+    public UserInfoDto getUserInfo(User user) {
+        UserEntity userEntity = userValidation.validateExistUser(user.getUsername());
+
+        return UserInfoDto.from(userEntity);
     }
 }
