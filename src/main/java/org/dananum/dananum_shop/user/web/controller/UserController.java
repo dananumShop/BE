@@ -62,12 +62,24 @@ public class UserController {
     public ResponseEntity<CommonResponseDto> editProfile(
             @AuthenticationPrincipal User user,
             @RequestPart(name = "editInfo") @Parameter(schema = @Schema(type = "string", format = "binary")) EditProfileReqDto editProfileReqDto,
-            @RequestPart(name = "profileImage")MultipartFile profileImage
-            ) {
+            @RequestPart(name = "profileImage") MultipartFile profileImage
+    ) {
         log.debug("[USER] 프로필 수정 요청이 들어왔습니다.");
         userService.editProfile(user, editProfileReqDto, profileImage);
         log.debug("[USER] 프로필 수정이 성공적으로 이루어졌습니다.");
 
         return ResponseEntity.ok(CommonResponseDto.successResponse("프로필 수정이 정상적으로 진행되었습니다."));
+    }
+
+    @Operation(summary = "프로필 이미지 삭제", description = "유저의 프로필 이미지를 삭제하는 api입니다.")
+    @DeleteMapping("/profile-image")
+    public ResponseEntity<CommonResponseDto> deleteProfileImg(
+            @AuthenticationPrincipal User user
+    ) {
+        log.debug("[USER] 프로필 이미지 삭제 요청이 들어왔습니다.");
+        userService.deleteProfileImage(user);
+        log.debug("[USER] 프로필 이미지를 성공적으로 삭제했습니다.");
+
+        return ResponseEntity.ok(CommonResponseDto.successResponse("프로필 이미지가 정상적으로 삭제되었습니다."));
     }
 }

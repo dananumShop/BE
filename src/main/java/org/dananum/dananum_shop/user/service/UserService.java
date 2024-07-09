@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.aws.ImageUploadService;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegrityViolationException;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.dananum.dananum_shop.global.web.enums.AccountStatus;
 import org.dananum.dananum_shop.product.web.entity.ProductDetailImgEntity;
 import org.dananum.dananum_shop.user.repository.UserProfileImgRepository;
@@ -155,4 +156,17 @@ public class UserService {
             imageUploadService.deleteImage(imagePath);
     }
 
+    /**
+     * 사용자의 프로필 이미지를 삭제합니다.
+     *
+     * @param user 현재 로그인한 사용자 엔티티
+     */
+    public void deleteProfileImage(User user) {
+        UserEntity userEntity = userValidation.validateExistUser(user.getUsername());
+
+        UserProfileImgEntity oldProfileImg = userProfileImgRepository.findByUserEntity(userEntity)
+                .orElseThrow(() -> new CustomNotFoundException("프로필 이미지가 없습니다."));
+
+        userProfileImgRepository.delete(oldProfileImg);
+    }
 }
