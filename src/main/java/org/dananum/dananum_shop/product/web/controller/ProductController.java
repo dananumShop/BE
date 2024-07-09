@@ -23,7 +23,7 @@ public class ProductController {
     private final ProductService productService;
 
     @Operation(summary = "전체 상품 조회", description = "전체 상품을 조회하는 api입니다.")
-    @GetMapping("/all-product")
+    @GetMapping("/all-product/{page}")
     public ResponseEntity<GetAllProductResDto> getAllProduct(
             @PathVariable int page
     ) {
@@ -36,7 +36,7 @@ public class ProductController {
 
 
     @Operation(summary = "카테고리별 상품 조회", description = "카테고리별 상품을 조회하는 api입니다.")
-    @GetMapping("/category-product")
+    @GetMapping("/category-product/{page}")
     public ResponseEntity<GetAllProductResDto> getProductByCategory(
             @PathVariable int page,
             @RequestParam ProductCategory category

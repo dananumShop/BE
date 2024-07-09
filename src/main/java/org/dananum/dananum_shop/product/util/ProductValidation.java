@@ -32,7 +32,7 @@ public class ProductValidation {
     // 상품 비어있는지 검증하는 메서드
     public void validateProductListIsEmpty(Page<ProductEntity> postList) {
         if(postList.isEmpty()){
-            throw new CustomNoSuchElementException("게시판에 게시글이 없습니다.");
+            throw new CustomNoSuchElementException("일치하는 상품이 없습니다.");
         }
     }
 }

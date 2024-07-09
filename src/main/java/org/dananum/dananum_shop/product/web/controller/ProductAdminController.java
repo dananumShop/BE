@@ -79,10 +79,11 @@ public class ProductAdminController {
             @AuthenticationPrincipal User user,
             @RequestParam Long productCid,
             @RequestPart(name = "productInformation", required = false) @Parameter(schema = @Schema(type = "string", format = "binary")) AddProductReqDto addProductReq,
+            @RequestPart(name = "productDetailImg") List<MultipartFile> productDetailImg,
             @RequestPart(name = "productInformationImg", required = false) List<MultipartFile> productInformationImg
     ) {
         log.debug("[PRODUCT_ADMIN] 물품 수정 요청이 들어왔습니다.");
-        adminProductService.editProduct(user, productCid, addProductReq, productInformationImg);
+        adminProductService.editProduct(user, productCid, addProductReq, productDetailImg, productInformationImg);
         log.debug("[PRODUCT_ADMIN] 물품 수정 작업을 성공적으로 완료하였습니다.");
 
         return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("물품 수정 완료"));

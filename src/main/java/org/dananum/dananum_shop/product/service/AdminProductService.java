@@ -104,13 +104,17 @@ public class AdminProductService {
      * @param addProductReq 수정할 상품의 정보 요청 DTO
      * @param productInformationImg 수정할 상품의 이미지 리스트
      */
-    public void editProduct(User user, Long productCid, AddProductReqDto addProductReq, List<MultipartFile> productInformationImg) {
+    public void editProduct(User user, Long productCid, AddProductReqDto addProductReq, List<MultipartFile> productDetailImg, List<MultipartFile> productInformationImg) {
         userValidation.validateAdminRole(user);
 
         ProductEntity targetProduct =  productValidation.validateExistProduct(productCid);
 
         if(addProductReq != null) {
             editProductInfo(targetProduct, addProductReq);
+        }
+
+        if(productDetailImg != null) {
+            editProductDetailImg(targetProduct, productInformationImg);
         }
 
         if(productInformationImg != null) {
@@ -137,7 +141,23 @@ public class AdminProductService {
     }
 
     /**
-     * 상품의 이미지를 수정하는 메서드
+     * 상품의 세부 이미지를 수정하는 메서드
+     *
+     * @param targetProduct 수정할 대상 상품
+     * @param productDetailImg 수정할 상품의 이미지 리스트
+     */
+    private void editProductDetailImg(ProductEntity targetProduct, List<MultipartFile> productDetailImg) {
+        List<ProductInformationImgEntity> oldImageList = productInformationImgRepository.findByProductEntity(targetProduct);
+
+        productInformationImgRepository.deleteAll(oldImageList);
+
+        imageUploadService.uploadProductDetail(productDetailImg, "product_detail_img", targetProduct);
+
+        deleteImagesFromS3(oldImageList);
+    }
+
+    /**
+     * 상품의 상세페이지 이미지를 수정하는 메서드
      *
      * @param targetProduct 수정할 대상 상품
      * @param productInfoImg 수정할 상품의 이미지 리스트
