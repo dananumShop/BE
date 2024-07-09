@@ -269,4 +269,10 @@ public class AdminProductService {
             imageUploadService.deleteImage(image.getImagePath());
         }
     }
+
+    public void deleteProductOption(User user, Long productOptionCid) {
+        userValidation.validateAdminRole(user);
+
+        productOptionRepository.deleteById(productOptionCid);
+    }
 }

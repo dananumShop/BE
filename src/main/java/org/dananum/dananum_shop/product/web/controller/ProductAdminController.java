@@ -86,7 +86,7 @@ public class ProductAdminController {
         adminProductService.editProduct(user, productCid, addProductReq, productDetailImg, productInformationImg);
         log.debug("[PRODUCT_ADMIN] 물품 수정 작업을 성공적으로 완료하였습니다.");
 
-        return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("물품 수정 완료"));
+        return ResponseEntity.ok(CommonResponseDto.successResponse("물품 수정 완료"));
     }
 
     @Operation(summary = "상품 삭제", description = "상품 삭제를 다루는 api입니다.")
@@ -99,7 +99,20 @@ public class ProductAdminController {
         adminProductService.deleteProduct(user, productCid);
         log.debug("[PRODUCT_ADMIN] 물품을 삭제하였습니다..");
 
-        return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("물품 삭제 완료"));
+        return ResponseEntity.ok(CommonResponseDto.successResponse("물품 삭제 완료"));
+    }
+
+    @Operation(summary = "상품 옵션 삭제", description = "상품 옵션 삭제를 다루는 api입니다.")
+    @DeleteMapping("/option")
+    public ResponseEntity<CommonResponseDto> deleteProductOption(
+            @AuthenticationPrincipal User user,
+            @RequestParam Long productOptionCid
+    ) {
+        log.debug("[PRODUCT_ADMIN] 물품 삭제 요청이 들어왔습니다.");
+        adminProductService.deleteProductOption(user, productOptionCid);
+        log.debug("[PRODUCT_ADMIN] 물품을 삭제하였습니다..");
+
+        return ResponseEntity.ok(CommonResponseDto.successResponse("물품 옵션 삭제 완료"));
     }
 }
 

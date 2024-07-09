@@ -22,11 +22,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserValidation userValidation;
 
-    public UserService(UserRepository userRepository, UserValidation userValidation) {
-        this.userRepository = userRepository;
-        this.userValidation = userValidation;
-    }
-
     /**
      * 사용자의 역할을 가져옵니다.
      *
