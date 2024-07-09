@@ -1,13 +1,17 @@
 package org.dananum.dananum_shop.product.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.aws.ImageUploadService;
+import org.dananum.dananum_shop.global.web.enums.ProductCategory;
+import org.dananum.dananum_shop.product.repository.ProductDetailImgRepository;
 import org.dananum.dananum_shop.product.repository.ProductInformationImgRepository;
 import org.dananum.dananum_shop.product.repository.ProductOptionRepository;
 import org.dananum.dananum_shop.product.repository.ProductRepository;
 import org.dananum.dananum_shop.product.util.ProductValidation;
 import org.dananum.dananum_shop.product.web.dto.crud.AddProductOptionReqDto;
 import org.dananum.dananum_shop.product.web.dto.crud.AddProductReqDto;
+import org.dananum.dananum_shop.product.web.entity.ProductDetailImgEntity;
 import org.dananum.dananum_shop.product.web.entity.ProductEntity;
 import org.dananum.dananum_shop.product.web.entity.ProductInformationImgEntity;
 import org.dananum.dananum_shop.product.web.entity.ProductOptionEntity;
@@ -23,11 +27,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminProductService {
 
     private final ProductRepository productRepository;
     private final ProductOptionRepository productOptionRepository;
     private final ProductInformationImgRepository productInformationImgRepository;
+    private final ProductDetailImgRepository productDetailImgRepository;
 
     private final UserValidation userValidation;
     private final ProductValidation productValidation;
@@ -135,8 +141,9 @@ public class AdminProductService {
             targetProduct.setProductName(addProductReqDto.getProductName());
         }
 
-        if(addProductReqDto.getProductCategory() != null) {
-            targetProduct.setProductCategory(addProductReqDto.getProductCategory());
+        if(addProductReqDto.getProductCategory() != null && !addProductReqDto.getProductCategory().isEmpty()) {
+            ProductCategory category = ProductCategory.valueOf(addProductReqDto.getProductCategory());
+            targetProduct.setProductCategory(category);
         }
     }
 
@@ -147,13 +154,13 @@ public class AdminProductService {
      * @param productDetailImg 수정할 상품의 이미지 리스트
      */
     private void editProductDetailImg(ProductEntity targetProduct, List<MultipartFile> productDetailImg) {
-        List<ProductInformationImgEntity> oldImageList = productInformationImgRepository.findByProductEntity(targetProduct);
+        List<ProductDetailImgEntity> oldImageList = productDetailImgRepository.findByProductEntity(targetProduct);
 
-        productInformationImgRepository.deleteAll(oldImageList);
+        productDetailImgRepository.deleteAll(oldImageList);
 
         imageUploadService.uploadProductDetail(productDetailImg, "product_detail_img", targetProduct);
 
-        deleteImagesFromS3(oldImageList);
+        deleteDetailImagesFromS3(oldImageList);
     }
 
     /**
@@ -169,7 +176,7 @@ public class AdminProductService {
 
         imageUploadService.uploadProductInformation(productInfoImg, "product_information_img", targetProduct);
 
-        deleteImagesFromS3(oldImageList);
+        deleteInfoImagesFromS3(oldImageList);
     }
 
     /**
@@ -184,11 +191,13 @@ public class AdminProductService {
         ProductEntity targetProduct =  productValidation.validateExistProduct(productCid);
 
         deleteProductOption(targetProduct);
+        List<ProductDetailImgEntity> detailImageList = deleteProductDetailImage(targetProduct);
         List<ProductInformationImgEntity> imageList = deleteProductInfoImage(targetProduct);
 
         productRepository.delete(targetProduct);
 
-        deleteImagesFromS3(imageList);
+        deleteDetailImagesFromS3(detailImageList);
+        deleteInfoImagesFromS3(imageList);
     }
 
     /**
@@ -208,6 +217,20 @@ public class AdminProductService {
      * @param targetProduct 삭제할 대상 상품
      * @return 삭제된 상품 이미지 리스트
      */
+    private List<ProductDetailImgEntity> deleteProductDetailImage(ProductEntity targetProduct) {
+        List<ProductDetailImgEntity> imageList = productDetailImgRepository.findByProductEntity(targetProduct);
+
+        productDetailImgRepository.deleteAll(imageList);
+
+        return imageList;
+    }
+
+    /**
+     * 상품에 연결된 이미지를 삭제하고 이미지 리스트를 반환하는 메서드
+     *
+     * @param targetProduct 삭제할 대상 상품
+     * @return 삭제된 상품 이미지 리스트
+     */
     private List<ProductInformationImgEntity> deleteProductInfoImage(ProductEntity targetProduct) {
         List<ProductInformationImgEntity> imageList = productInformationImgRepository.findByProductEntity(targetProduct);
 
@@ -216,6 +239,18 @@ public class AdminProductService {
         return imageList;
     }
 
+    /**
+     * S3에서 이미지를 비동기적으로 삭제하는 메서드
+     *
+     * @param images 삭제할 이미지 엔티티 리스트
+     */
+    @Async
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void deleteDetailImagesFromS3(List<ProductDetailImgEntity> images) {
+        for (ProductDetailImgEntity image : images) {
+            imageUploadService.deleteImage(image.getImagePath());
+        }
+    }
 
     /**
      * S3에서 이미지를 비동기적으로 삭제하는 메서드
@@ -224,7 +259,7 @@ public class AdminProductService {
      */
     @Async
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void deleteImagesFromS3(List<ProductInformationImgEntity> images) {
+    public void deleteInfoImagesFromS3(List<ProductInformationImgEntity> images) {
         for (ProductInformationImgEntity image : images) {
             imageUploadService.deleteImage(image.getImagePath());
         }

@@ -36,9 +36,11 @@ public class ProductEntity extends TimeEntity {
 
 
     public static ProductEntity from(final AddProductReqDto addProductReqDto) {
+        ProductCategory category = ProductCategory.valueOf(addProductReqDto.getProductCategory()); // String을 Enum으로 변환
+
         return ProductEntity.builder()
                 .productName(addProductReqDto.getProductName())
-                .productCategory(addProductReqDto.getProductCategory())
+                .productCategory(category)
                 .build();
     }
 }

@@ -5,6 +5,8 @@ import org.dananum.dananum_shop.product.web.entity.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductDetailImgRepository extends JpaRepository<ProductDetailImgEntity, Long> {
 
@@ -16,4 +18,6 @@ public interface ProductDetailImgRepository extends JpaRepository<ProductDetailI
      * @return imageOrder가 가장 작은 ProductDetailImgEntity
      */
     ProductDetailImgEntity findTopByProductEntityOrderByImageOrderAsc(ProductEntity productEntity);
+
+    List<ProductDetailImgEntity> findByProductEntity(ProductEntity targetProduct);
 }
