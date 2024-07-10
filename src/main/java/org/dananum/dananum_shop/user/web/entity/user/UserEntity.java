@@ -26,10 +26,6 @@ public class UserEntity extends TimeEntity {
     @Schema(description = "유저 고유 아이디")
     private Long userCid;
 
-    @Schema(description = "유저 장바구니", example = "1")
-    @Column(name = "user_cart")
-    private Long userCart;
-
     @NotNull
     @Schema(description = "유저 이메일(아이디)", example = "test@test.test")
     @Column(name = "user_email")
@@ -67,6 +63,16 @@ public class UserEntity extends TimeEntity {
                 .accountStatus(AccountStatus.ACTIVE)
                 .userRole(Roles.ROLE_USER)
                 .build();
+    }
+
+    public UserEntity updateUserPassword(String newPwd) {
+        this.userPassword = newPwd;
+        return this;
+    }
+
+    public UserEntity updateUserName(String newName) {
+        this.userName = newName;
+        return this;
     }
 
     public UserEntity updateAccountStatus(AccountStatus accountStatus) {

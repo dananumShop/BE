@@ -1,19 +1,23 @@
 package org.dananum.dananum_shop.user.web.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.web.dto.CommonResponseDto;
 import org.dananum.dananum_shop.user.service.UserService;
+import org.dananum.dananum_shop.user.web.dto.edit.EditProfileReqDto;
+import org.dananum.dananum_shop.user.web.dto.getUser.GetUserInfoResDto;
+import org.dananum.dananum_shop.user.web.dto.getUser.UserInfoDto;
 import org.dananum.dananum_shop.user.web.dto.getUser.GetUserRoleResDto;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -53,5 +57,43 @@ public class UserController {
         log.debug("[USER] 계정 복구가 성공적으로 이루어졌습니다.");
 
         return ResponseEntity.ok(CommonResponseDto.successResponse("계정 복구가 정상적으로 진행되었습니다."));
+    }
+
+    @Operation(summary = "유저 정보 수정", description = "유저의 개인정보를 수정하는 api입니다.")
+    @PutMapping(name = "/edit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CommonResponseDto> editProfile(
+            @AuthenticationPrincipal User user,
+            @RequestPart(name = "editInfo") @Parameter(schema = @Schema(type = "string", format = "binary")) EditProfileReqDto editProfileReqDto,
+            @RequestPart(name = "profileImage") MultipartFile profileImage
+    ) {
+        log.debug("[USER] 프로필 수정 요청이 들어왔습니다.");
+        userService.editProfile(user, editProfileReqDto, profileImage);
+        log.debug("[USER] 프로필 수정이 성공적으로 이루어졌습니다.");
+
+        return ResponseEntity.ok(CommonResponseDto.successResponse("프로필 수정이 정상적으로 진행되었습니다."));
+    }
+
+    @Operation(summary = "프로필 이미지 삭제", description = "유저의 프로필 이미지를 삭제하는 api입니다.")
+    @DeleteMapping("/profile-image")
+    public ResponseEntity<CommonResponseDto> deleteProfileImg(
+            @AuthenticationPrincipal User user
+    ) {
+        log.debug("[USER] 프로필 이미지 삭제 요청이 들어왔습니다.");
+        userService.deleteProfileImage(user);
+        log.debug("[USER] 프로필 이미지를 성공적으로 삭제했습니다.");
+
+        return ResponseEntity.ok(CommonResponseDto.successResponse("프로필 이미지가 정상적으로 삭제되었습니다."));
+    }
+
+    @Operation(summary = "유저 정보 조회", description = "유저의 정보를 조회하는 api입니다.")
+    @GetMapping("/info")
+    public ResponseEntity<GetUserInfoResDto> getUserInfo(
+            @AuthenticationPrincipal User user
+    ) {
+        log.debug("[USER] 유저 정보 조회 요청이 들어왔습니다.");
+        UserInfoDto userInfo = userService.getUserInfo(user);
+        log.debug("[USER] 유저 정보를 성공적으로 불러왔습니다.");
+
+        return ResponseEntity.ok(GetUserInfoResDto.successResponse("유저 정보를 불러왔습니다.", userInfo));
     }
 }
