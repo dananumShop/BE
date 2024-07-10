@@ -180,6 +180,9 @@ public class UserService {
     public UserInfoDto getUserInfo(User user) {
         UserEntity userEntity = userValidation.validateExistUser(user.getUsername());
 
-        return UserInfoDto.from(userEntity);
+        UserProfileImgEntity userProfile = userProfileImgRepository.findByUserEntity(userEntity)
+                .orElse(null);
+
+        return UserInfoDto.from(userEntity, userProfile);
     }
 }
