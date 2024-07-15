@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.web.dto.CommonResponseDto;
@@ -95,5 +97,14 @@ public class UserController {
         log.debug("[USER] 유저 정보를 성공적으로 불러왔습니다.");
 
         return ResponseEntity.ok(GetUserInfoResDto.successResponse("유저 정보를 불러왔습니다.", userInfo));
+    }
+
+    @Operation(summary = "엑세스 토큰 재발급", description = "refresh 토큰을 활용해 access-token 재발급을 도와주는 api입니다.")
+    @GetMapping("/new-token")
+    public ResponseEntity<CommonResponseDto> getNewAccessToken(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        log.debug("[USER] Access_Token 재발급 요청이 들어왔습니다.");
+        userService.getNewAccessToken(httpServletRequest,httpServletResponse);
+        log.debug("[USER] Access_Token 재발급이 정상적으로 이루어 졌습니다.");
+        return ResponseEntity.ok().body(CommonResponseDto.successResponse("Access_Token 재발급을 완료했습니다."));
     }
 }
