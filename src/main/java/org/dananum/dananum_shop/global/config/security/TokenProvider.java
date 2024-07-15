@@ -75,7 +75,6 @@ public class TokenProvider {
         Cookie accessTokenCookie = new Cookie("ACCESS_TOKEN", accessToken);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge(ACCESS_TOKEN_EXPIRE_TIME);
-        accessTokenCookie.setDomain("localhost");
 
 
         httpServletResponse.addCookie(accessTokenCookie);
