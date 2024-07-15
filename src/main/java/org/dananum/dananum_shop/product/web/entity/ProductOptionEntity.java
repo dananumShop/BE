@@ -15,6 +15,7 @@ import org.dananum.dananum_shop.product.web.dto.crud.AddProductOptionReqDto;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "product_option_table")
 public class ProductOptionEntity extends TimeEntity {
 
     @Id
