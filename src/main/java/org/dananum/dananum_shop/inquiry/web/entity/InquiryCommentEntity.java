@@ -20,6 +20,9 @@ public class InquiryCommentEntity extends TimeEntity {
     @Schema(description = "문의 답변 고유 아이디")
     private Long inquiryCommentCid;
 
+    @Schema(description = "문의 cid")
+    private Long inquiryCid;
+
     @Schema(description = "답변 내용")
     @Column(name = "inquiry_comment_content")
     private String commentContent;
