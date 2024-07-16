@@ -1,0 +1,35 @@
+package org.dananum.dananum_shop.inquiry.web.dto.get;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
+import org.dananum.dananum_shop.inquiry.web.entity.InquiryEntity;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@ToString
+@Slf4j
+public class GetInquiryDto {
+
+    @Schema(description = "문의 고유 번호")
+    private Long inquiryCid;
+
+    @Schema(description = "문의 제목")
+    private String inquiryTitle;
+
+    @Schema(description = "작성일")
+    private LocalDateTime createdAt;
+
+    public static GetInquiryDto from(InquiryEntity inquiry) {
+        return GetInquiryDto.builder()
+                .inquiryCid(inquiry.getInquiryCid())
+                .inquiryTitle(inquiry.getTitle())
+                .createdAt(inquiry.getCreatedAt())
+                .build();
+    }
+}

@@ -2,12 +2,17 @@ package org.dananum.dananum_shop.inquiry.util;
 
 import lombok.RequiredArgsConstructor;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomAccessDeniedException;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomNoSuchElementException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
-import org.dananum.dananum_shop.global.web.enums.user.Roles;
 import org.dananum.dananum_shop.inquiry.repository.InquiryRepository;
 import org.dananum.dananum_shop.inquiry.web.entity.InquiryEntity;
 import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -30,5 +35,16 @@ public class InquiryValidation {
         if(!user.getUserCid().equals(targetInquiry.getUserCid())) {
             throw new CustomAccessDeniedException("문의 접근 권한이 없습니다.");
         }
+    }
+
+    public Page<InquiryEntity> existInquiryList(int page, UserEntity user) {
+        Pageable pageable = PageRequest.of(page-1, 10);
+        Page<InquiryEntity> inquiryList = inquiryRepository.findAllByUserCid(user.getUserCid(), pageable);
+
+        if(inquiryList.isEmpty()) {
+            throw new CustomNoSuchElementException("작성된 문의가 없습니다.");
+        }
+
+        return inquiryList;
     }
 }
