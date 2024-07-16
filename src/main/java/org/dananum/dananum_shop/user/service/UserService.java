@@ -1,8 +1,12 @@
 package org.dananum.dananum_shop.user.service;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.parser.Authorization;
 import org.dananum.dananum_shop.global.aws.ImageUploadService;
+import org.dananum.dananum_shop.global.config.security.TokenProvider;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegrityViolationException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.dananum.dananum_shop.global.web.enums.AccountStatus;
@@ -34,6 +38,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserProfileImgRepository userProfileImgRepository;
     private final UserValidation userValidation;
+    private final TokenProvider tokenProvider;
 
     private final ImageUploadService imageUploadService;
 
@@ -184,5 +189,19 @@ public class UserService {
                 .orElse(null);
 
         return UserInfoDto.from(userEntity, userProfile);
+    }
+
+    /**
+     * 현재 사용자의 Access Token을 갱신하여 새로운 Access Token을 발급하는 메서드입니다.
+     * HttpServletRequest에서 Access Token을 추출하고,
+     * 추출한 Access Token을 사용하여 Refresh Token을 검증하고,
+     * 유효한 경우 해당 유저의 Authentication 정보를 가져와서 새로운 Access Token을 생성합니다.
+     * 생성된 Access Token을 HttpServletResponse의 Authorization 헤더에 설정하여 반환합니다.
+     *
+     * @param httpServletRequest  현재 HTTP 요청 객체
+     * @param httpServletResponse HTTP 응답 객체
+     */
+    public void getNewAccessToken(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        tokenProvider.getNewAccessToken(httpServletRequest, httpServletResponse);
     }
 }
