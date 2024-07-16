@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.dananum.dananum_shop.global.web.entity.TimeEntity;
 import org.dananum.dananum_shop.global.web.enums.inquiry.InquiryStatus;
+import org.dananum.dananum_shop.inquiry.web.dto.add.AddInquiryReqDto;
+import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 
 @Entity
 @Getter
@@ -20,6 +22,11 @@ public class InquiryEntity extends TimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "문의 고유 아이디")
     private Long inquiryCid;
+
+    @NotNull
+    @Schema(description = "상품 cid")
+    @Column(name = "product_cid")
+    private Long productCid;
 
     @NotNull
     @Schema(description = "작성자")
@@ -40,4 +47,14 @@ public class InquiryEntity extends TimeEntity {
     @Schema(description = "문의 상태", example = "OPEN")
     @Column(name = "inquiry_status")
     private InquiryStatus inquiryStatus;
+
+    public static InquiryEntity from(final UserEntity userEntity, final AddInquiryReqDto addInquiryReqDto) {
+        return InquiryEntity.builder()
+                .productCid(addInquiryReqDto.getProductCid())
+                .userCid(userEntity.getUserCid())
+                .title(addInquiryReqDto.getInquiryTitle())
+                .content(addInquiryReqDto.getInquiryContent())
+                .inquiryStatus(InquiryStatus.OPEN)
+                .build();
+    }
 }
