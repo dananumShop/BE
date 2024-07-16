@@ -4,13 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.parser.Authorization;
 import org.dananum.dananum_shop.global.aws.ImageUploadService;
 import org.dananum.dananum_shop.global.config.security.TokenProvider;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomDataIntegrityViolationException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
-import org.dananum.dananum_shop.global.web.enums.AccountStatus;
-import org.dananum.dananum_shop.product.web.entity.ProductDetailImgEntity;
+import org.dananum.dananum_shop.global.web.enums.user.AccountStatus;
 import org.dananum.dananum_shop.user.repository.UserProfileImgRepository;
 import org.dananum.dananum_shop.user.repository.UserRepository;
 import org.dananum.dananum_shop.user.util.UserValidation;
@@ -29,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

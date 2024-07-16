@@ -2,8 +2,8 @@ package org.dananum.dananum_shop.global.web.entity.dataLoader;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dananum.dananum_shop.global.web.enums.AccountStatus;
-import org.dananum.dananum_shop.global.web.enums.Roles;
+import org.dananum.dananum_shop.global.web.enums.user.AccountStatus;
+import org.dananum.dananum_shop.global.web.enums.user.Roles;
 import org.dananum.dananum_shop.user.repository.UserRepository;
 import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.springframework.beans.factory.annotation.Value;

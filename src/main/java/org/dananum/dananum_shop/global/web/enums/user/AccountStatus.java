@@ -1,4 +1,4 @@
-package org.dananum.dananum_shop.global.web.enums;
+package org.dananum.dananum_shop.global.web.enums.user;
 
 public enum AccountStatus {
     ACTIVE("ACTIVE"),

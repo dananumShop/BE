@@ -1,4 +1,4 @@
-package org.dananum.dananum_shop.global.web.enums;
+package org.dananum.dananum_shop.global.web.enums.product;
 
 public enum ProductGender {
     MALE("MALE"),

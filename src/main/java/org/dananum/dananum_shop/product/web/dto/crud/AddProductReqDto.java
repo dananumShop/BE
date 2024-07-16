@@ -2,8 +2,7 @@ package org.dananum.dananum_shop.product.web.dto.crud;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.dananum.dananum_shop.global.web.enums.ProductCategory;
-import org.dananum.dananum_shop.global.web.enums.ProductGender;
+import org.dananum.dananum_shop.global.web.enums.product.ProductGender;
 
 @Getter
 @Setter

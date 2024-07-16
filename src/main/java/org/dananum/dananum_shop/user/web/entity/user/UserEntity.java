@@ -5,9 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.dananum.dananum_shop.global.web.entity.TimeEntity;
-import org.dananum.dananum_shop.global.web.enums.AccountStatus;
-import org.dananum.dananum_shop.global.web.enums.EmailCertificationState;
-import org.dananum.dananum_shop.global.web.enums.Roles;
+import org.dananum.dananum_shop.global.web.enums.user.AccountStatus;
+import org.dananum.dananum_shop.global.web.enums.user.Roles;
 import org.dananum.dananum_shop.user.web.dto.signup.SignupReqDto;
 
 import java.time.LocalDateTime;
