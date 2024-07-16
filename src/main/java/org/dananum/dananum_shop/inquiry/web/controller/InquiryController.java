@@ -6,9 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.web.dto.CommonResponseDto;
 import org.dananum.dananum_shop.inquiry.service.InquiryService;
+import org.dananum.dananum_shop.inquiry.web.dto.add.AddInquiryCommentReqDto;
 import org.dananum.dananum_shop.inquiry.web.dto.add.AddInquiryReqDto;
-import org.dananum.dananum_shop.product.web.dto.list.detail.GetProductDetailResDto;
-import org.dananum.dananum_shop.product.web.dto.list.detail.ProductDetailPageDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -36,4 +35,16 @@ public class InquiryController {
         return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("문의를 추가했습니다."));
     }
 
+    @Operation(summary = "문의 답변", description = "문의에 답변을 추가하는 api 입니다.")
+    @PostMapping("/comment")
+    public ResponseEntity<CommonResponseDto> addInquiryComment(
+            @AuthenticationPrincipal User user,
+            @RequestBody AddInquiryCommentReqDto addInquiryCommentReqDto
+    ) {
+        log.debug("[INQUIRY_PUBLIC] 문의 답변 추가 요청이 들어왔습니다.");
+        inquiryService.addInquiryComment(user, addInquiryCommentReqDto);
+        log.debug("[INQUIRY_PUBLIC] 성공적으로 문의 답변을 추가하였습니다.");
+
+        return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("문의 답변을 추가했습니다."));
+    }
 }

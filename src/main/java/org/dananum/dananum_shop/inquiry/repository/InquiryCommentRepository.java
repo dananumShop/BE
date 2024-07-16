@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface InauiryCommentRepository extends JpaRepository<InquiryCommentEntity, Long> {
+public interface InquiryCommentRepository extends JpaRepository<InquiryCommentEntity, Long> {
 }
