@@ -10,6 +10,8 @@ import org.dananum.dananum_shop.inquiry.web.dto.add.AddInquiryCommentReqDto;
 import org.dananum.dananum_shop.inquiry.web.dto.add.AddInquiryReqDto;
 import org.dananum.dananum_shop.inquiry.web.dto.get.GetInquiryDto;
 import org.dananum.dananum_shop.inquiry.web.dto.get.GetInquiryListResDto;
+import org.dananum.dananum_shop.inquiry.web.dto.get.detail.GetInquiryDetailResDto;
+import org.dananum.dananum_shop.inquiry.web.dto.get.detail.InquiryDetailDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -63,5 +65,18 @@ public class InquiryController {
         log.debug("[INQUIRY_PUBLIC] 성공적으로 문의를 조회했습니다.");
 
         return ResponseEntity.ok(GetInquiryListResDto.successResponse("유저가 작성한 문의를 불러왔습니다.", getInquiryDtoList));
+    }
+
+    @Operation(summary = "문의 조회", description = "작성한 문의를 조회하는 api 입니다.")
+    @GetMapping("/comment/{inquiryCid}")
+    public ResponseEntity<GetInquiryDetailResDto> getInquiryDetail(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long inquiryCid
+    ) {
+        log.debug("[INQUIRY_PUBLIC] 작성 문의 조회 요청이 들어왔습니다.");
+        InquiryDetailDto inquiryDetailDto = inquiryService.getInquiryDetail(user, inquiryCid);
+        log.debug("[INQUIRY_PUBLIC] 성공적으로 문의를 조회했습니다.");
+
+        return ResponseEntity.ok(GetInquiryDetailResDto.successResponse("문의를 불러왔습니다.", inquiryDetailDto));
     }
 }

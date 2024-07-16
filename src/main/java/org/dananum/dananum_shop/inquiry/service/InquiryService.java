@@ -1,12 +1,15 @@
 package org.dananum.dananum_shop.inquiry.service;
 
 import lombok.RequiredArgsConstructor;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomNoSuchElementException;
 import org.dananum.dananum_shop.inquiry.repository.InquiryCommentRepository;
 import org.dananum.dananum_shop.inquiry.repository.InquiryRepository;
 import org.dananum.dananum_shop.inquiry.util.InquiryValidation;
 import org.dananum.dananum_shop.inquiry.web.dto.add.AddInquiryCommentReqDto;
 import org.dananum.dananum_shop.inquiry.web.dto.add.AddInquiryReqDto;
 import org.dananum.dananum_shop.inquiry.web.dto.get.GetInquiryDto;
+import org.dananum.dananum_shop.inquiry.web.dto.get.detail.InquiryCommentDto;
+import org.dananum.dananum_shop.inquiry.web.dto.get.detail.InquiryDetailDto;
 import org.dananum.dananum_shop.inquiry.web.entity.InquiryCommentEntity;
 import org.dananum.dananum_shop.inquiry.web.entity.InquiryEntity;
 import org.dananum.dananum_shop.user.util.UserValidation;
@@ -97,5 +100,56 @@ public class InquiryService {
         }
 
         return getInquiryDtoList;
+    }
+
+    /**
+     * 사용자가 조회하는 특정 문의의 상세 정보를 가져오는 메서드입니다.
+     *
+     * @param user 조회를 요청하는 사용자.
+     * @param inquiryCid 조회할 문의의 고유 식별자.
+     * @return 조회된 문의의 상세 정보를 담은 InquiryDetailDto 객체.
+     * @throws UserNotFoundException 사용자가 존재하지 않을 경우.
+     * @throws CustomAccessDeniedException 사용자가 해당 문의에 접근 권한이 없을 경우.
+     * @throws CustomNotFoundException 조회하려는 문의가 존재하지 않을 경우.
+     */
+    @Transactional(readOnly = true)
+    public InquiryDetailDto getInquiryDetail(User user, Long inquiryCid) {
+        UserEntity userEntity = userValidation.validateExistUser(user.getUsername());
+
+        InquiryEntity targetInquiry = inquiryValidation.validateInquiryAccess(userEntity, inquiryCid);
+
+        List<InquiryCommentDto> inquiryCommentDtoList = commentList(targetInquiry, userEntity);
+
+        return InquiryDetailDto.from(targetInquiry, inquiryCommentDtoList);
+    }
+
+    /**
+     * 특정 문의에 달린 댓글 목록을 가져오는 메서드입니다.
+     *
+     * @param targetInquiry 댓글을 조회할 문의 엔티티.
+     * @param user 댓글을 조회하는 사용자의 엔티티.
+     * @return 조회된 댓글 목록을 담은 InquiryCommentDto 객체 리스트.
+     */
+    private List<InquiryCommentDto> commentList(InquiryEntity targetInquiry, UserEntity user) {
+        List<InquiryCommentEntity> inquiryCommentEntityList = inquiryCommentRepository.findAllByInquiryCid(targetInquiry.getInquiryCid());
+
+        return commentEntityToDto(inquiryCommentEntityList, user);
+    }
+
+    /**
+     * 댓글 엔티티 목록을 InquiryCommentDto 객체 목록으로 변환하는 메서드입니다.
+     *
+     * @param inquiryCommentEntityList 댓글 엔티티 객체 목록.
+     * @param user 댓글을 조회하는 사용자의 엔티티.
+     * @return InquiryCommentDto 객체로 변환된 댓글 목록.
+     */
+    private List<InquiryCommentDto> commentEntityToDto(List<InquiryCommentEntity> inquiryCommentEntityList, UserEntity user) {
+        List<InquiryCommentDto> inquiryCommentDtoList = new ArrayList<>();
+
+        for(InquiryCommentEntity comment : inquiryCommentEntityList) {
+            inquiryCommentDtoList.add(InquiryCommentDto.from(comment, user));
+        }
+
+        return inquiryCommentDtoList;
     }
 }
