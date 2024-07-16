@@ -3,7 +3,7 @@ package org.dananum.dananum_shop.product.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.aws.ImageUploadService;
-import org.dananum.dananum_shop.global.web.enums.ProductCategory;
+import org.dananum.dananum_shop.global.web.enums.product.ProductCategory;
 import org.dananum.dananum_shop.product.repository.ProductDetailImgRepository;
 import org.dananum.dananum_shop.product.repository.ProductInformationImgRepository;
 import org.dananum.dananum_shop.product.repository.ProductOptionRepository;

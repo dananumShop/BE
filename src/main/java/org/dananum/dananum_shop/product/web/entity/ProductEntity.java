@@ -5,11 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.dananum.dananum_shop.global.web.entity.TimeEntity;
-import org.dananum.dananum_shop.global.web.enums.ProductCategory;
-import org.dananum.dananum_shop.global.web.enums.ProductGender;
+import org.dananum.dananum_shop.global.web.enums.product.ProductCategory;
+import org.dananum.dananum_shop.global.web.enums.product.ProductGender;
 import org.dananum.dananum_shop.product.web.dto.crud.AddProductReqDto;
-
-import java.util.List;
 
 @Entity
 @Getter

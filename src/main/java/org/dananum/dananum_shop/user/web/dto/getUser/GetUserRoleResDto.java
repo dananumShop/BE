@@ -2,8 +2,7 @@ package org.dananum.dananum_shop.user.web.dto.getUser;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.dananum.dananum_shop.global.web.enums.EmailCertificationState;
-import org.dananum.dananum_shop.global.web.enums.Roles;
+import org.dananum.dananum_shop.global.web.enums.user.Roles;
 import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 
 @Getter

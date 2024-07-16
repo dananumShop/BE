@@ -2,7 +2,7 @@ package org.dananum.dananum_shop.product.web.dto.crud;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import org.dananum.dananum_shop.global.web.enums.ProductOptionSize;
+import org.dananum.dananum_shop.global.web.enums.product.ProductOptionSize;
 
 @Getter
 @Setter

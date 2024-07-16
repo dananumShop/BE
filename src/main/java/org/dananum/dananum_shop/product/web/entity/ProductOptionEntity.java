@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.dananum.dananum_shop.global.web.entity.TimeEntity;
-import org.dananum.dananum_shop.global.web.enums.ProductCategory;
-import org.dananum.dananum_shop.global.web.enums.ProductOptionSize;
+import org.dananum.dananum_shop.global.web.enums.product.ProductOptionSize;
 import org.dananum.dananum_shop.product.web.dto.crud.AddProductOptionReqDto;
 
 @Entity

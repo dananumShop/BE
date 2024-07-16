@@ -1,7 +1,7 @@
 package org.dananum.dananum_shop.product.repository;
 
-import org.dananum.dananum_shop.global.web.enums.ProductCategory;
-import org.dananum.dananum_shop.global.web.enums.ProductGender;
+import org.dananum.dananum_shop.global.web.enums.product.ProductCategory;
+import org.dananum.dananum_shop.global.web.enums.product.ProductGender;
 import org.dananum.dananum_shop.product.web.entity.ProductEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
