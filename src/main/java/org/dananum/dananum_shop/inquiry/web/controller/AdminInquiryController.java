@@ -7,8 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.dananum.dananum_shop.global.web.dto.CommonResponseDto;
 import org.dananum.dananum_shop.global.web.enums.inquiry.InquiryStatus;
 import org.dananum.dananum_shop.inquiry.service.AdminInquiryService;
+import org.dananum.dananum_shop.inquiry.web.dto.add.AddInquiryCommentReqDto;
 import org.dananum.dananum_shop.inquiry.web.dto.get.GetInquiryDto;
 import org.dananum.dananum_shop.inquiry.web.dto.get.GetInquiryListResDto;
+import org.dananum.dananum_shop.inquiry.web.dto.get.detail.GetInquiryDetailResDto;
+import org.dananum.dananum_shop.inquiry.web.dto.get.detail.InquiryDetailDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -45,10 +48,36 @@ public class AdminInquiryController {
             @RequestParam int page,
             @RequestParam InquiryStatus inquiryStatus
             ) {
-        log.debug("[INQUIRY_ADMIN] 문의 전체 조회 요청이 들어왔습니다.");
+        log.debug("[INQUIRY_ADMIN] 상태별 문의 조회 요청이 들어왔습니다.");
         List<GetInquiryDto> inquiryDtoList = adminInquiryService.getInquiryByStatus(user, page, inquiryStatus);
-        log.debug("[INQUIRY_ADMIN] 성공적으로 전체 문의를 조회했습니다.");
+        log.debug("[INQUIRY_ADMIN] 성공적으로 상태별 문의를 조회했습니다.");
 
         return ResponseEntity.ok(GetInquiryListResDto.successResponse("문의를 조회 했습니다.", inquiryDtoList));
+    }
+
+    @Operation(summary = "상태별 문의 조회", description = "상태별 문의를 조회하는 api 입니다.")
+    @PostMapping("/{inquiryCid}")
+    public ResponseEntity<CommonResponseDto> getAllInquiry(
+            @AuthenticationPrincipal User user,
+            @RequestBody AddInquiryCommentReqDto addInquiryCommentReqDto
+    ) {
+        log.debug("[INQUIRY_ADMIN] 문의 답변 작성 요청이 들어왔습니다.");
+        adminInquiryService.addInquiryComment(user, addInquiryCommentReqDto);
+        log.debug("[INQUIRY_ADMIN] 성공적으로 문의 답변을 추가했습니다.");
+
+        return ResponseEntity.ok(CommonResponseDto.createSuccessResponse("문의 답변 작성을 완료했습니다."));
+    }
+
+    @Operation(summary = "문의 조회", description = "작성한 문의를 조회하는 api 입니다.")
+    @GetMapping("/{inquiryCid}")
+    public ResponseEntity<GetInquiryDetailResDto> getInquiryDetail(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long inquiryCid
+    ) {
+        log.debug("[INQUIRY_PUBLIC] 작성 문의 조회 요청이 들어왔습니다.");
+        InquiryDetailDto inquiryDetailDto = adminInquiryService.getInquiryDetail(user, inquiryCid);
+        log.debug("[INQUIRY_PUBLIC] 성공적으로 문의를 조회했습니다.");
+
+        return ResponseEntity.ok(GetInquiryDetailResDto.successResponse("문의를 불러왔습니다.", inquiryDetailDto));
     }
 }

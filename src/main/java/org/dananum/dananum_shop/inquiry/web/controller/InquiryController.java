@@ -68,7 +68,7 @@ public class InquiryController {
     }
 
     @Operation(summary = "문의 조회", description = "작성한 문의를 조회하는 api 입니다.")
-    @GetMapping("/comment/{inquiryCid}")
+    @GetMapping("/{inquiryCid}")
     public ResponseEntity<GetInquiryDetailResDto> getInquiryDetail(
             @AuthenticationPrincipal User user,
             @PathVariable Long inquiryCid

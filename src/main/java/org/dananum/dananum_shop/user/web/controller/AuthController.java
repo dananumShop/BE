@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping("/public/auth")
 @RequiredArgsConstructor
-@Tag(name = "회원관련 API")
+@Tag(name = "[PUBLIC] 회원관련 API")
 public class AuthController {
     private final AuthService authService;
 

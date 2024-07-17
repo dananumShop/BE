@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/public/mail")
-@Tag(name = "회원관련 API")
+@Tag(name = "[PUBLIC] 회원관련 API")
 public class CertificationEmailController {
 
     private final CertificationEmailService certificationEmailService;
