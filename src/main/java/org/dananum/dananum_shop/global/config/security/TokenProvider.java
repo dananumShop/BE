@@ -109,7 +109,7 @@ public class TokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    public void validateToken(String accessToken, HttpServletResponse httpServletResponse) {
+    public void validateToken(String accessToken, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
 
@@ -120,6 +120,7 @@ public class TokenProvider {
             handleException(httpServletResponse, "잘못된 JWT 서명입니다.", HttpStatus.UNAUTHORIZED);
         } catch (ExpiredJwtException e) {
             log.error("AccessToken 이 만료되었습니다.");
+            getNewAccessToken(httpServletRequest, httpServletResponse);
             handleException(httpServletResponse, "AccessToken 이 만료되었습니다.", HttpStatus.FORBIDDEN);
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
@@ -156,7 +157,7 @@ public class TokenProvider {
 
         String accessToken = resolveToken(httpServletRequest);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getAuthentication(accessToken);
 
         RefreshToken tokenInfo = refreshTokenRepository.findByAccessToken(accessToken)
                 .orElseThrow(() -> new CustomNotFoundException("일치하는 토큰을 찾을 수 없습니다."));
