@@ -125,4 +125,24 @@ public class AdminInquiryService {
 
         return inquiryCommentDtoList;
     }
+
+    /**
+     * 주어진 사용자와 문의 ID에 따라 문의 상태를 업데이트하는 메서드입니다.
+     *
+     * @param user 문의 상태를 업데이트할 사용자 정보
+     * @param inquiryCid 상태를 업데이트할 문의 ID
+     * @throws AdminValidationException 사용자가 관리자 권한이 없는 경우
+     * @throws CustomNotFoundException 일치하는 문의를 찾을 수 없는 경우
+     */
+    @Transactional
+    public void updateInquiryStatus(User user, Long inquiryCid) {
+        adminValidation.validateAdminUser(user);
+
+        InquiryEntity targetInquiry = inquiryRepository.findById(inquiryCid)
+                .orElseThrow(() -> new CustomNotFoundException("일치하는 문의가 없습니다."));
+
+        targetInquiry.updateInquiryStatus(targetInquiry.getInquiryStatus());
+
+        inquiryRepository.save(targetInquiry);
+    }
 }

@@ -74,10 +74,24 @@ public class AdminInquiryController {
             @AuthenticationPrincipal User user,
             @PathVariable Long inquiryCid
     ) {
-        log.debug("[INQUIRY_PUBLIC] 작성 문의 조회 요청이 들어왔습니다.");
+        log.debug("[INQUIRY_ADMIN] 작성 문의 조회 요청이 들어왔습니다.");
         InquiryDetailDto inquiryDetailDto = adminInquiryService.getInquiryDetail(user, inquiryCid);
-        log.debug("[INQUIRY_PUBLIC] 성공적으로 문의를 조회했습니다.");
+        log.debug("[INQUIRY_ADMIN] 성공적으로 문의를 조회했습니다.");
 
         return ResponseEntity.ok(GetInquiryDetailResDto.successResponse("문의를 불러왔습니다.", inquiryDetailDto));
+    }
+
+
+    @Operation(summary = "문의 상태 변경", description = "문의의 상태를 변경하는 api입니다.")
+    @PutMapping("/{inquiryCid}")
+    public ResponseEntity<CommonResponseDto> updateInquiryStatus(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long inquiryCid
+    ) {
+        log.debug("[INQUIRY_ADMIN] 작성 문의 조회 요청이 들어왔습니다.");
+        adminInquiryService.updateInquiryStatus(user, inquiryCid);
+        log.debug("[INQUIRY_ADMIN] 성공적으로 문의를 조회했습니다.");
+
+        return ResponseEntity.ok(CommonResponseDto.successResponse("문의 상태를 변경했습니다."));
     }
 }
