@@ -82,16 +82,29 @@ public class AdminInquiryController {
     }
 
 
-    @Operation(summary = "문의 상태 변경", description = "문의의 상태를 변경하는 api입니다.")
+    @Operation(summary = "문의 상태 변경", description = "문의의 상태를 변경하는 api 입니다.")
     @PutMapping("/{inquiryCid}")
     public ResponseEntity<CommonResponseDto> updateInquiryStatus(
             @AuthenticationPrincipal User user,
             @PathVariable Long inquiryCid
     ) {
-        log.debug("[INQUIRY_ADMIN] 작성 문의 조회 요청이 들어왔습니다.");
+        log.debug("[INQUIRY_ADMIN] 문의 상태 변경 요청이 들어왔습니다.");
         adminInquiryService.updateInquiryStatus(user, inquiryCid);
-        log.debug("[INQUIRY_ADMIN] 성공적으로 문의를 조회했습니다.");
+        log.debug("[INQUIRY_ADMIN] 성공적으로 문의상태를 변경했습니다.");
 
         return ResponseEntity.ok(CommonResponseDto.successResponse("문의 상태를 변경했습니다."));
+    }
+
+    @Operation(summary = "문의 삭제", description = "문의의 삭제하는 api 입니다.")
+    @DeleteMapping("/{inquiryCid}")
+    public ResponseEntity<CommonResponseDto> deleteInquiry(
+            @AuthenticationPrincipal User user,
+            @PathVariable Long inquiryCid
+    ) {
+        log.debug("[INQUIRY_ADMIN] 문의 삭제 요청이 들어왔습니다.");
+        adminInquiryService.deleteInquiry(user, inquiryCid);
+        log.debug("[INQUIRY_ADMIN] 성공적으로 문의를 제했습니다");
+
+        return ResponseEntity.ok(CommonResponseDto.successResponse("문의를 삭제했습니다."));
     }
 }
