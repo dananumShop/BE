@@ -2,6 +2,7 @@ package org.dananum.dananum_shop.inquiry.service;
 
 import lombok.RequiredArgsConstructor;
 import org.dananum.dananum_shop.global.util.AdminValidation;
+import org.dananum.dananum_shop.global.web.enums.inquiry.InquiryStatus;
 import org.dananum.dananum_shop.inquiry.repository.InquiryRepository;
 import org.dananum.dananum_shop.inquiry.util.InquiryValidation;
 import org.dananum.dananum_shop.inquiry.web.dto.get.GetInquiryDto;
@@ -35,6 +36,24 @@ public class AdminInquiryService {
         UserEntity userEntity = adminValidation.validateAdminUser(user);
 
         Page<InquiryEntity> inquiryList = inquiryValidation.existInquiryList(page, userEntity);
+
+        return inquiryValidation.inquiryEntityToDto(inquiryList);
+    }
+
+    /**
+     * 주어진 사용자, 페이지 번호 및 문의 상태에 따라 문의 사항을 가져오는 메서드입니다.
+     *
+     * @param user 조회할 사용자 정보
+     * @param page 조회할 페이지 번호
+     * @param inquiryStatus 조회할 문의 상태
+     * @return 문의 사항 DTO 목록
+     * @throws AdminValidationException 사용자가 관리자 권한이 없는 경우
+     * @throws InquiryNotFoundException 해당 페이지에 문의 사항이 없는 경우
+     */
+    public List<GetInquiryDto> getInquiryByStatus(User user, int page, InquiryStatus inquiryStatus) {
+        UserEntity userEntity = adminValidation.validateAdminUser(user);
+
+        Page<InquiryEntity> inquiryList = inquiryValidation.existInquiryByStatusList(page, userEntity, inquiryStatus);
 
         return inquiryValidation.inquiryEntityToDto(inquiryList);
     }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomAccessDeniedException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNoSuchElementException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
+import org.dananum.dananum_shop.global.web.enums.inquiry.InquiryStatus;
 import org.dananum.dananum_shop.inquiry.repository.InquiryRepository;
 import org.dananum.dananum_shop.inquiry.web.dto.get.GetInquiryDto;
 import org.dananum.dananum_shop.inquiry.web.entity.InquiryEntity;
@@ -60,12 +61,40 @@ public class InquiryValidation {
         return inquiryList;
     }
 
+    /**
+     * 주어진 페이지 번호에 따라 모든 문의 사항을 가져오는 메서드입니다.
+     *
+     * @param page 조회할 페이지 번호
+     * @param user 조회할 사용자 정보
+     * @return 문의 사항 엔티티 페이지
+     * @throws CustomNoSuchElementException 문의 사항이 없는 경우
+     */
     public Page<InquiryEntity> existInquiryList(int page, UserEntity user) {
         Pageable pageable = PageRequest.of(page-1, 10);
         Page<InquiryEntity> inquiryList = inquiryRepository.findAll(pageable);
 
         if(inquiryList.isEmpty()) {
             throw new CustomNoSuchElementException("작성된 문의가 없습니다.");
+        }
+
+        return inquiryList;
+    }
+
+    /**
+     * 주어진 페이지 번호와 문의 상태에 따라 문의 사항을 가져오는 메서드입니다.
+     *
+     * @param page 조회할 페이지 번호
+     * @param user 조회할 사용자 정보
+     * @param inquiryStatus 조회할 문의 상태
+     * @return 문의 사항 엔티티 페이지
+     * @throws CustomNoSuchElementException 해당 상태의 문의 사항이 없는 경우
+     */
+    public Page<InquiryEntity> existInquiryByStatusList(int page, UserEntity user, InquiryStatus inquiryStatus) {
+        Pageable pageable = PageRequest.of(page-1, 10);
+        Page<InquiryEntity> inquiryList = inquiryRepository.findAllByInquiryStatus(pageable, inquiryStatus);
+
+        if(inquiryList.isEmpty()) {
+            throw new CustomNoSuchElementException("상태별 문의가 없습니다.");
         }
 
         return inquiryList;
