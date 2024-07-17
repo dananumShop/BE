@@ -37,4 +37,12 @@ public class CommonResponseDto {
                 .message(message)
                 .build();
     }
+
+    public static CommonResponseDto errorResponse(final String message, final HttpStatus status) {
+        return CommonResponseDto.builder()
+                .code(status.value())
+                .success(false)
+                .message(message)
+                .build();
+    }
 }

@@ -1,23 +1,23 @@
 package org.dananum.dananum_shop.global.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.dananum.dananum_shop.global.web.dto.CommonResponseDto;
+import org.springframework.http.HttpStatus;
 import org.apache.http.HttpHeaders;
 import org.dananum.dananum_shop.global.config.redis.entity.RefreshToken;
 import org.dananum.dananum_shop.global.config.redis.repository.RefreshTokenRepository;
 import org.dananum.dananum_shop.global.config.redis.service.TokenService;
 import org.dananum.dananum_shop.global.util.JwtTokenUtil;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
-import org.dananum.dananum_shop.global.web.advice.exception.jwt.CustomExpiredJwtException;
 import org.dananum.dananum_shop.global.web.advice.exception.jwt.CustomJwtBadReqException;
 import org.dananum.dananum_shop.global.web.advice.exception.jwt.CustomJwtException;
 import org.dananum.dananum_shop.user.repository.UserRepository;
-import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +29,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -114,19 +116,30 @@ public class TokenProvider {
             JwtTokenUtil.isExpired(accessToken, key);
 
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
-            throw new CustomJwtException("잘못된 JWT 서명입니다.");
+            log.error("잘못된 JWT 서명입니다.");
+            handleException(httpServletResponse, "잘못된 JWT 서명입니다.", HttpStatus.UNAUTHORIZED);
         } catch (ExpiredJwtException e) {
             log.error("AccessToken 이 만료되었습니다.");
-            throw new CustomExpiredJwtException("AccessToken 이 만료되었습니다.");
-//            getNewAccessToken(accessToken, getAuthentication(accessToken), httpServletResponse);
+            handleException(httpServletResponse, "AccessToken 이 만료되었습니다.", HttpStatus.FORBIDDEN);
         } catch (UnsupportedJwtException e) {
             log.info("지원되지 않는 JWT 토큰입니다.");
-            throw new CustomJwtBadReqException("지원되지 않는 JWT 토큰입니다.");
+            handleException(httpServletResponse, "지원되지 않는 JWT 토큰입니다.", HttpStatus.BAD_REQUEST);
         } catch (IllegalArgumentException e) {
             log.info("JWT 토큰이 잘못되었습니다.");
-            throw new CustomJwtBadReqException("JWT 토큰이 잘못되었습니다.");
+            handleException(httpServletResponse, "JWT 토큰이 잘못되었습니다.", HttpStatus.BAD_REQUEST);
+        }
     }
+
+    private void handleException(HttpServletResponse response, String message, HttpStatus status) {
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        try (PrintWriter writer = response.getWriter()) {
+            String json = new ObjectMapper().writeValueAsString(CommonResponseDto.errorResponse(message, status));
+            writer.print(json);
+        } catch (IOException e) {
+            log.error("Error writing response", e);
+        }
     }
 
     /**

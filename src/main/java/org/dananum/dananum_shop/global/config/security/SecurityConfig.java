@@ -95,7 +95,6 @@ public class SecurityConfig {
                 .exceptionHandling((exception) -> exception
                         .accessDeniedHandler(new CustomAccessDeniedHandler()));
 
-
         // jwt filter
         http
                 .addFilterBefore(new JwtAuthorizationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
