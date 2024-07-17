@@ -28,7 +28,7 @@ public class UserInfoDto {
                 .userCid(userEntity.getUserCid())
                 .userEmail(userEntity.getUserEmail())
                 .userName(userEntity.getUserName())
-                .profileImgPath(profileImgEntity.getUserProfileFilePath())
+                .profileImgPath(profileImgEntity == null ? "" : profileImgEntity.getUserProfileFilePath())
                 .build();
     }
 }
