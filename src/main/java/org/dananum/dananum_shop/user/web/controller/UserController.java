@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RequestMapping("/user")
 @RequiredArgsConstructor
-@Tag(name = "유저관련 API")
+@Tag(name = "[PRIVATE] 유저관련 API")
 public class UserController {
 
     private final UserService userService;

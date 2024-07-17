@@ -57,4 +57,16 @@ public class InquiryEntity extends TimeEntity {
                 .inquiryStatus(InquiryStatus.OPEN)
                 .build();
     }
+
+    public InquiryEntity updateInquiryStatus(InquiryStatus inquiryStatus) {
+        if (inquiryStatus.equals(InquiryStatus.OPEN)) {
+            this.inquiryStatus = InquiryStatus.CLOSED;
+        }
+
+        if (inquiryStatus.equals(InquiryStatus.CLOSED)) {
+            this.inquiryStatus = InquiryStatus.OPEN;
+        }
+
+        return this;
+    }
 }

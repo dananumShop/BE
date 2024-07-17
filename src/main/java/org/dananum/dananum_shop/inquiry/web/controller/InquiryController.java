@@ -33,7 +33,7 @@ public class InquiryController {
     public ResponseEntity<CommonResponseDto> addInquiry(
             @AuthenticationPrincipal User user,
             @RequestBody AddInquiryReqDto addInquiryReqDto
-            ) {
+    ) {
         log.debug("[INQUIRY_PUBLIC] 문의 생성 요청이 들어왔습니다.");
         inquiryService.addInquiry(user, addInquiryReqDto);
         log.debug("[INQUIRY_PUBLIC] 성공적으로 문의를 추가하였습니다.");
@@ -68,7 +68,7 @@ public class InquiryController {
     }
 
     @Operation(summary = "문의 조회", description = "작성한 문의를 조회하는 api 입니다.")
-    @GetMapping("/comment/{inquiryCid}")
+    @GetMapping("/{inquiryCid}")
     public ResponseEntity<GetInquiryDetailResDto> getInquiryDetail(
             @AuthenticationPrincipal User user,
             @PathVariable Long inquiryCid
