@@ -1,7 +1,6 @@
 package org.dananum.dananum_shop.inquiry.service;
 
 import lombok.RequiredArgsConstructor;
-import org.dananum.dananum_shop.global.web.advice.exception.CustomNoSuchElementException;
 import org.dananum.dananum_shop.inquiry.repository.InquiryCommentRepository;
 import org.dananum.dananum_shop.inquiry.repository.InquiryRepository;
 import org.dananum.dananum_shop.inquiry.util.InquiryValidation;
@@ -80,27 +79,12 @@ public class InquiryService {
     public List<GetInquiryDto> getInquiryList(User user, int page) {
         UserEntity userEntity = userValidation.validateExistUser(user.getUsername());
 
-        Page<InquiryEntity> inquiryList = inquiryValidation.existInquiryList(page, userEntity);
+        Page<InquiryEntity> inquiryList = inquiryValidation.existUserInquiryList(page, userEntity);
 
-        return InquiryEntityToDto(inquiryList);
+        return inquiryValidation.inquiryEntityToDto(inquiryList);
     }
 
-    /**
-     * InquiryEntity 객체 목록을 GetInquiryDto 객체 목록으로 변환하는 메서드입니다.
-     *
-     * @param inquiryList InquiryEntity 객체로 구성된 페이지 목록.
-     * @return GetInquiryDto 객체로 구성된 목록을 반환합니다.
-     */
-    private List<GetInquiryDto> InquiryEntityToDto(Page<InquiryEntity> inquiryList) {
 
-        List<GetInquiryDto> getInquiryDtoList = new ArrayList<>();
-
-        for(InquiryEntity inquiry : inquiryList) {
-            getInquiryDtoList.add(GetInquiryDto.from(inquiry));
-        }
-
-        return getInquiryDtoList;
-    }
 
     /**
      * 사용자가 조회하는 특정 문의의 상세 정보를 가져오는 메서드입니다.

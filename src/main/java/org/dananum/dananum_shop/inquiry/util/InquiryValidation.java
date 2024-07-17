@@ -5,6 +5,7 @@ import org.dananum.dananum_shop.global.web.advice.exception.CustomAccessDeniedEx
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNoSuchElementException;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.dananum.dananum_shop.inquiry.repository.InquiryRepository;
+import org.dananum.dananum_shop.inquiry.web.dto.get.GetInquiryDto;
 import org.dananum.dananum_shop.inquiry.web.entity.InquiryEntity;
 import org.dananum.dananum_shop.user.web.entity.user.UserEntity;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -47,7 +49,7 @@ public class InquiryValidation {
      * @return 페이징된 사용자의 문의 목록을 담은 Page 객체.
      * @throws CustomNoSuchElementException 작성된 문의가 없을 경우 발생하는 예외.
      */
-    public Page<InquiryEntity> existInquiryList(int page, UserEntity user) {
+    public Page<InquiryEntity> existUserInquiryList(int page, UserEntity user) {
         Pageable pageable = PageRequest.of(page-1, 10);
         Page<InquiryEntity> inquiryList = inquiryRepository.findAllByUserCid(user.getUserCid(), pageable);
 
@@ -56,5 +58,33 @@ public class InquiryValidation {
         }
 
         return inquiryList;
+    }
+
+    public Page<InquiryEntity> existInquiryList(int page, UserEntity user) {
+        Pageable pageable = PageRequest.of(page-1, 10);
+        Page<InquiryEntity> inquiryList = inquiryRepository.findAll(pageable);
+
+        if(inquiryList.isEmpty()) {
+            throw new CustomNoSuchElementException("작성된 문의가 없습니다.");
+        }
+
+        return inquiryList;
+    }
+
+    /**
+     * InquiryEntity 객체 목록을 GetInquiryDto 객체 목록으로 변환하는 메서드입니다.
+     *
+     * @param inquiryList InquiryEntity 객체로 구성된 페이지 목록.
+     * @return GetInquiryDto 객체로 구성된 목록을 반환합니다.
+     */
+    public List<GetInquiryDto> inquiryEntityToDto(Page<InquiryEntity> inquiryList) {
+
+        List<GetInquiryDto> getInquiryDtoList = new ArrayList<>();
+
+        for(InquiryEntity inquiry : inquiryList) {
+            getInquiryDtoList.add(GetInquiryDto.from(inquiry));
+        }
+
+        return getInquiryDtoList;
     }
 }
