@@ -21,11 +21,19 @@ public class ProductDetailDto {
     @Schema(description = "상품 썸네일")
     private String productThumbnail;
 
+    @Schema(description = "상품 가격")
+    private int price;
+
+    @Schema(description = "상품 설명")
+    private String description;
+
     public static ProductDetailDto from(ProductEntity productEntity, ProductDetailImgEntity productThumbnail) {
         return ProductDetailDto.builder()
                 .productCid(productEntity.getProductCid())
                 .productName(productEntity.getProductName())
                 .productThumbnail(productThumbnail.getImagePath())
+                .price(productEntity.getPrice())
+                .description(productEntity.getDescription())
                 .build();
     }
 }

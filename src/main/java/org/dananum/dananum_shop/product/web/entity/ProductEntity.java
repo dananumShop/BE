@@ -34,6 +34,15 @@ public class ProductEntity extends TimeEntity {
     private ProductCategory productCategory;
 
     @NotNull
+    @Schema(description = "상품 가격")
+    @Column(name = "product_price")
+    private int price;
+
+    @NotNull
+    @Schema(description = "상품 설명")
+    @Column(name = "product_description")
+    private String description;
+
     @Schema(description = "상품 성별", example = "FEMALE")
     @Column(name = "product_gender")
     private ProductGender productGender;
@@ -46,6 +55,8 @@ public class ProductEntity extends TimeEntity {
                 .productName(addProductReqDto.getProductName())
                 .productCategory(category)
                 .productGender(addProductReqDto.getProductGender())
+                .price(addProductReqDto.getPrice())
+                .description(addProductReqDto.getDescription())
                 .build();
     }
 }
