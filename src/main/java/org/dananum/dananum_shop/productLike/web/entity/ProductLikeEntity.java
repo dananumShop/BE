@@ -26,4 +26,11 @@ public class ProductLikeEntity extends TimeEntity {
     @Schema(description = "상품 cid")
     @Column(name = "product_cid")
     private Long productCid;
+
+    public static ProductLikeEntity from(Long userCid, Long productCid) {
+        return ProductLikeEntity.builder()
+                .userCid(userCid)
+                .productCid(productCid)
+                .build();
+    }
 }
