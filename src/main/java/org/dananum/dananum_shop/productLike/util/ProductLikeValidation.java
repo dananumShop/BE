@@ -2,6 +2,7 @@ package org.dananum.dananum_shop.productLike.util;
 
 import lombok.RequiredArgsConstructor;
 import org.dananum.dananum_shop.global.web.advice.exception.CustomNoSuchElementException;
+import org.dananum.dananum_shop.global.web.advice.exception.CustomNotFoundException;
 import org.dananum.dananum_shop.productLike.repository.ProductLikeRepository;
 import org.dananum.dananum_shop.productLike.web.entity.ProductLikeEntity;
 import org.springframework.data.domain.Page;
@@ -25,5 +26,12 @@ public class ProductLikeValidation {
         }
 
         return productLikeList;
+    }
+
+    public ProductLikeEntity validateExistLikeEntity(Long productLikeCid) {
+        ProductLikeEntity likeEntity = productLikeRepository.findById(productLikeCid)
+                .orElseThrow(() -> new CustomNotFoundException("일치하는 찜 상품이 없습니다."));
+
+        return likeEntity;
     }
 }

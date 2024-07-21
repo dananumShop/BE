@@ -65,4 +65,12 @@ public class ProductLikeService {
 
         return productDtoList;
     }
+
+    public void deleteLikeProduct(User user, Long productLikeCid) {
+        userValidation.validateExistUser(user.getUsername());
+
+        ProductLikeEntity likeEntity = productLikeValidation.validateExistLikeEntity(productLikeCid);
+
+        productLikeRepository.delete(likeEntity);
+    }
 }
