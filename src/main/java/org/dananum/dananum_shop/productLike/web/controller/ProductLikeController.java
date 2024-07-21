@@ -53,7 +53,7 @@ public class ProductLikeController {
 
     @Operation(summary = "찜 삭제", description = "찜 상품을 삭제하는 api입니다.")
     @DeleteMapping("/")
-    public ResponseEntity<GetAllProductResDto> deleteLikeProduct(
+    public ResponseEntity<CommonResponseDto> deleteLikeProduct(
             @AuthenticationPrincipal User user,
             @RequestParam Long productLikeCid
     ) {
@@ -61,6 +61,6 @@ public class ProductLikeController {
         productLikeService.deleteLikeProduct(user, productLikeCid);
         log.debug("[PRODUCT_PUBLIC] 찜 목록을 불러왔습니다.");
 
-        return ResponseEntity.ok(GetAllProductResDto.successResponse("성공적으로 찜 목록을 불러왔습니다.", likeList));
+        return ResponseEntity.ok(CommonResponseDto.successResponse("찜 상품을 삭제했습니다."));
     }
 }
