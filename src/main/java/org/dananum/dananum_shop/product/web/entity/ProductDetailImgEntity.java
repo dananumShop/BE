@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "productdetail_image")
+@Table(name = "product_detail_image_table")
 public class ProductDetailImgEntity {
     @Id
     @Column(name = "product_detail_image_cid")
